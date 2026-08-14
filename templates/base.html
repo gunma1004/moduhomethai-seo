@@ -17,445 +17,460 @@
     <meta property="og:type" content="website" />
     <meta property="og:url" content="{{ canonical_url }}" />
 
-    <!-- Pretendard 폰트 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
 
-    <!-- 🌟 절대 깨지지 않는 자체 순수 CSS (외부 스크립트 에러 100% 차단) -->
     <style>
-      * { box-sizing: border-box; margin: 0; padding: 0; }
-      body {
-        font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
-        background-color: #0b0b0e;
-        color: #f3f4f6;
+      *, *::before, *::after {
+        box-sizing: border-box !important;
+        margin: 0;
+        padding: 0;
+      }
+      html, body {
+        width: 100%;
+        min-height: 100%;
+        background-color: #0b0b0e !important;
+        color: #f3f4f6 !important;
+        font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif !important;
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+      }
+      a { text-decoration: none; color: inherit; display: inline-block; }
+
+      /* 전체 레이아웃 래퍼 */
+      .wrap {
+        width: 100%;
+        max-width: 640px; /* 모바일/PC 최적 고정폭 */
+        margin: 0 auto;
         min-height: 100vh;
         display: flex;
         flex-direction: column;
+        background-color: #0b0b0e;
+        position: relative;
+        box-shadow: 0 0 50px rgba(0,0,0,0.8);
       }
-      a { text-decoration: none; color: inherit; }
-      
-      .container {
-        width: 100%;
-        max-width: 896px;
-        margin: 0 auto;
-        padding: 0 16px;
-      }
-      
-      /* 상단 긴급 배너 */
-      .urgent-banner {
-        background: linear-gradient(to right, #d97706, #eab308, #d97706);
+
+      /* 상단 알림 바 */
+      .top-notice {
+        background: linear-gradient(90deg, #d97706, #facc15, #d97706);
         color: #000;
-        font-size: 13px;
-        font-weight: 900;
+        font-size: 12px;
+        font-weight: 800;
         text-align: center;
-        padding: 10px 16px;
+        padding: 8px 12px;
+        line-height: 1.4;
       }
 
       /* 헤더 */
       header {
         position: sticky;
         top: 0;
-        z-index: 50;
-        background-color: rgba(11, 11, 14, 0.95);
+        z-index: 100;
+        background: rgba(11, 11, 14, 0.95);
         backdrop-filter: blur(8px);
-        border-bottom: 1px solid rgba(234, 179, 8, 0.2);
+        border-bottom: 1px solid rgba(250, 204, 21, 0.2);
         padding: 12px 16px;
-      }
-      .header-content {
-        max-width: 896px;
-        margin: 0 auto;
         display: flex;
         justify-content: space-between;
         align-items: center;
       }
-      .logo-box {
+      .logo-area {
         display: flex;
         align-items: center;
         gap: 10px;
       }
-      .logo-img-wrapper {
-        width: 40px;
-        height: 40px;
-        border-radius: 12px;
+      .logo-img-box {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
         background: linear-gradient(135deg, #ca8a04, #facc15);
         padding: 1px;
-        overflow: hidden;
-      }
-      .logo-img-inner {
-        width: 100%;
-        height: 100%;
-        background-color: #121216;
-        border-radius: 11px;
         display: flex;
         align-items: center;
         justify-content: center;
         overflow: hidden;
       }
-      .logo-img-inner img { width: 100%; height: 100%; object-fit: cover; }
-      .brand-title {
-        font-size: 18px;
+      .logo-img-box img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 9px;
+        background: #121216;
+      }
+      .logo-title {
+        font-size: 17px;
         font-weight: 900;
         background: linear-gradient(to right, #fde047, #facc15, #f59e0b);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
+        line-height: 1.2;
       }
-      .brand-sub {
+      .logo-sub {
         font-size: 10px;
-        font-weight: 700;
         color: #facc15;
+        font-weight: 700;
       }
-      .btn-main-link {
-        font-size: 12px;
+      .btn-header-home {
+        font-size: 11px;
         color: #d1d5db;
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.08);
         border: 1px solid rgba(255, 255, 255, 0.15);
-        padding: 6px 14px;
-        border-radius: 9999px;
+        padding: 5px 12px;
+        border-radius: 20px;
         font-weight: 600;
       }
 
-      /* 메인 콘텐츠 영역 */
+      /* 메인 바디 */
       main {
         flex: 1;
+        padding: 20px 16px;
         width: 100%;
-        max-width: 896px;
-        margin: 0 auto;
-        padding: 32px 16px;
       }
 
-      /* 배너 섹션 */
-      .hero-section { text-align: center; margin-bottom: 36px; }
-      .hero-card {
-        border-radius: 24px;
+      /* 배너 */
+      .banner-box {
+        width: 100%;
+        border-radius: 20px;
         overflow: hidden;
-        border: 2px solid rgba(234, 179, 8, 0.4);
+        border: 2px solid rgba(250, 204, 21, 0.4);
         position: relative;
         margin-bottom: 24px;
+        background: #18181c;
       }
-      .hero-img {
+      .banner-img {
         width: 100%;
-        height: 220px;
+        height: 180px;
         object-fit: cover;
         display: block;
-        opacity: 0.9;
+        opacity: 0.85;
       }
-      .hero-overlay {
+      .banner-overlay {
         position: absolute;
         inset: 0;
-        background: linear-gradient(to top, rgba(11, 11, 14, 0.95), rgba(0, 0, 0, 0.2), transparent);
+        background: linear-gradient(to top, rgba(11, 11, 14, 0.95), transparent 60%);
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
         align-items: center;
-        padding: 20px;
+        padding: 16px;
+        text-align: center;
       }
-      .badge-discount {
-        background-color: #eab308;
+      .banner-badge {
+        background: #facc15;
         color: #000;
-        font-size: 12px;
+        font-size: 11px;
         font-weight: 900;
-        padding: 4px 14px;
-        border-radius: 9999px;
-        margin-bottom: 8px;
+        padding: 3px 12px;
+        border-radius: 12px;
+        margin-bottom: 6px;
       }
-      .hero-text {
-        color: #fff;
-        font-size: 16px;
+      .banner-txt {
+        font-size: 14px;
         font-weight: 700;
-      }
-      .hero-title {
-        font-size: 26px;
-        font-weight: 900;
-        line-height: 1.3;
-        margin-bottom: 10px;
-      }
-      .hero-desc {
-        font-size: 13px;
-        color: #d1d5db;
-        max-width: 550px;
-        margin: 0 auto;
-        line-height: 1.6;
+        color: #fff;
       }
 
-      /* 🌟 제휴점 카드 리스트 */
-      .shop-list {
+      /* 타이틀 */
+      .intro-title {
+        font-size: 22px;
+        font-weight: 900;
+        text-align: center;
+        line-height: 1.35;
+        margin-bottom: 8px;
+      }
+      .intro-title span {
+        background: linear-gradient(to right, #fde047, #facc15, #f59e0b);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .intro-desc {
+        font-size: 12px;
+        color: #9ca3af;
+        text-align: center;
+        line-height: 1.5;
+        margin-bottom: 24px;
+      }
+
+      /* 샵 카드 목록 */
+      .shop-card-list {
         display: flex;
         flex-direction: column;
-        gap: 24px;
+        gap: 20px;
         width: 100%;
       }
-      .shop-card {
-        background-color: #18181c;
-        border: 1px solid rgba(234, 179, 8, 0.3);
-        border-radius: 24px;
+      .shop-card-item {
+        background-color: #16161a;
+        border: 1px solid rgba(250, 204, 21, 0.3);
+        border-radius: 20px;
         overflow: hidden;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
       }
-      .shop-card-img-wrap {
+      .shop-card-thumb {
         position: relative;
-        height: 190px;
-        overflow: hidden;
+        height: 170px;
+        width: 100%;
+        background: #202024;
       }
-      .shop-card-img-wrap img {
+      .shop-card-thumb img {
         width: 100%;
         height: 100%;
         object-fit: cover;
         display: block;
       }
-      .shop-card-gradient {
+      .shop-card-thumb-grad {
         position: absolute;
         inset: 0;
-        background: linear-gradient(to top, #18181c, transparent 60%);
+        background: linear-gradient(to top, #16161a 0%, transparent 60%);
       }
-      .shop-card-badges {
+      .shop-card-tags {
         position: absolute;
-        top: 12px;
-        left: 12px;
+        top: 10px;
+        left: 10px;
         display: flex;
-        gap: 6px;
+        gap: 5px;
         z-index: 10;
       }
-      .badge-fire {
-        background-color: #facc15;
+      .badge-tag-fire {
+        background: #facc15;
         color: #000;
-        font-size: 11px;
+        font-size: 10px;
         font-weight: 900;
-        padding: 3px 10px;
-        border-radius: 9999px;
+        padding: 3px 8px;
+        border-radius: 6px;
       }
-      .badge-safe {
-        background-color: rgba(0, 0, 0, 0.7);
+      .badge-tag-safe {
+        background: rgba(0, 0, 0, 0.7);
         color: #fde047;
-        font-size: 11px;
+        font-size: 10px;
         font-weight: 700;
-        padding: 3px 10px;
-        border-radius: 9999px;
-        border: 1px solid rgba(234, 179, 8, 0.4);
+        padding: 3px 8px;
+        border-radius: 6px;
+        border: 1px solid rgba(250, 204, 21, 0.4);
       }
-      .shop-card-header {
+      .shop-card-info-top {
         position: absolute;
-        bottom: 12px;
-        left: 16px;
-        right: 16px;
+        bottom: 10px;
+        left: 14px;
+        right: 14px;
         z-index: 10;
       }
-      .shop-card-name { font-size: 22px; font-weight: 900; color: #fff; }
-      .shop-card-loc { font-size: 12px; color: #facc15; font-weight: 700; margin-top: 2px; }
-
-      .shop-card-body { padding: 20px; }
-      .shop-card-desc { font-size: 13px; color: #e5e7eb; margin-bottom: 16px; line-height: 1.5; }
-      .course-box {
-        background-color: rgba(0, 0, 0, 0.5);
-        border: 1px solid rgba(255, 255, 255, 0.06);
-        border-radius: 16px;
-        padding: 14px;
-        margin-bottom: 18px;
+      .shop-card-name {
+        font-size: 20px;
+        font-weight: 900;
+        color: #fff;
+        line-height: 1.2;
       }
-      .course-box-title { font-size: 11px; font-weight: 700; color: #facc15; margin-bottom: 8px; }
-      .course-row {
+      .shop-card-region {
+        font-size: 11px;
+        color: #facc15;
+        font-weight: 700;
+        margin-top: 2px;
+      }
+
+      .shop-card-content {
+        padding: 14px 16px 16px;
+      }
+      .shop-card-desc {
+        font-size: 12px;
+        color: #d1d5db;
+        line-height: 1.4;
+        margin-bottom: 12px;
+      }
+      .price-box {
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 12px;
+        padding: 10px 12px;
+        margin-bottom: 14px;
+      }
+      .price-box-title {
+        font-size: 10px;
+        font-weight: 700;
+        color: #facc15;
+        margin-bottom: 6px;
+      }
+      .price-row {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 6px 0;
-        font-size: 13px;
+        font-size: 12px;
+        padding: 4px 0;
       }
-      .course-row:not(:last-child) { border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
-      .course-price {
+      .price-row:not(:last-child) {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      .price-val {
         font-weight: 900;
         color: #facc15;
-        background: rgba(234, 179, 8, 0.1);
-        padding: 3px 10px;
-        border-radius: 8px;
-        border: 1px solid rgba(234, 179, 8, 0.3);
+        background: rgba(250, 204, 21, 0.1);
+        padding: 2px 8px;
+        border-radius: 6px;
+        border: 1px solid rgba(250, 204, 21, 0.3);
       }
-
-      .btn-grid {
+      .btn-action-group {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 10px;
+        gap: 8px;
       }
-      .btn-call {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: linear-gradient(to right, #eab308, #f59e0b);
-        color: #000;
+      .btn-tel {
+        background: linear-gradient(90deg, #eab308, #f59e0b);
+        color: #000 !important;
+        font-size: 12px;
         font-weight: 900;
-        font-size: 13px;
-        padding: 12px;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(234, 179, 8, 0.2);
+        padding: 11px 0;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 4px 10px rgba(234, 179, 8, 0.2);
       }
       .btn-sms {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: rgba(255, 255, 255, 0.1);
-        color: #fff;
-        font-weight: 700;
-        font-size: 13px;
-        padding: 12px;
-        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.08);
         border: 1px solid rgba(255, 255, 255, 0.2);
+        color: #fff !important;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 11px 0;
+        border-radius: 10px;
+        text-align: center;
       }
 
-      /* 🌟 지역별 네비게이션 그리드 */
-      .nav-section {
-        background-color: #141418;
-        border: 1px solid rgba(234, 179, 8, 0.2);
-        border-radius: 24px;
-        padding: 22px 18px;
-        margin-top: 36px;
+      /* 지역 네비게이션 */
+      .nav-panel {
+        background: #141418;
+        border: 1px solid rgba(250, 204, 21, 0.2);
+        border-radius: 20px;
+        padding: 16px;
+        margin-top: 28px;
       }
-      .nav-title {
-        font-size: 18px;
+      .nav-panel-title {
+        font-size: 16px;
         font-weight: 900;
         color: #fff;
         text-align: center;
-        margin-bottom: 20px;
+        margin-bottom: 14px;
       }
-      .nav-city-title {
-        font-size: 13px;
-        font-weight: 700;
-        color: #facc15;
-        margin: 14px 0 8px 0;
-      }
-      .nav-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 8px;
-        margin-bottom: 16px;
-      }
-      @media (min-width: 640px) {
-        .nav-grid { grid-template-columns: repeat(4, 1fr); }
-      }
-      @media (min-width: 768px) {
-        .nav-grid { grid-template-columns: repeat(6, 1fr); }
-        .hero-title { font-size: 36px; }
-        .hero-img { height: 260px; }
-      }
-      .nav-btn {
-        background-color: #18181c;
-        border: 1px solid rgba(234, 179, 8, 0.3);
-        color: #e5e7eb;
-        padding: 10px 4px;
-        border-radius: 12px;
+      .nav-city-heading {
         font-size: 12px;
         font-weight: 700;
+        color: #facc15;
+        margin: 12px 0 6px 0;
+      }
+      .nav-grid-box {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+        margin-bottom: 10px;
+      }
+      .nav-link-btn {
+        background: #1c1c22;
+        border: 1px solid rgba(250, 204, 21, 0.25);
+        color: #e5e7eb !important;
+        padding: 8px 2px;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 700;
         text-align: center;
-        display: block;
-        white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        white-space: nowrap;
       }
 
-      /* 하단 메인 이동 섹션 */
-      .bottom-home-box {
-        background-color: #18181c;
-        border: 1px solid rgba(234, 179, 8, 0.3);
-        border-radius: 20px;
-        padding: 24px 16px;
+      /* 하단 홈 버튼 */
+      .home-back-box {
+        background: #141418;
+        border: 1px solid rgba(250, 204, 21, 0.2);
+        border-radius: 16px;
+        padding: 18px 12px;
         text-align: center;
-        margin-top: 36px;
+        margin-top: 28px;
       }
-      .btn-home {
-        display: inline-block;
-        font-size: 13px;
-        font-weight: 700;
-        color: #fde047;
-        background: rgba(234, 179, 8, 0.15);
-        border: 1px solid rgba(234, 179, 8, 0.35);
-        padding: 10px 22px;
-        border-radius: 12px;
+      .btn-home-back {
+        font-size: 12px;
+        font-weight: 800;
+        color: #fde047 !important;
+        background: rgba(250, 204, 21, 0.12);
+        border: 1px solid rgba(250, 204, 21, 0.3);
+        padding: 8px 18px;
+        border-radius: 10px;
       }
 
       /* 푸터 */
       footer {
-        background-color: #070709;
+        background: #070709;
         border-top: 1px solid rgba(255, 255, 255, 0.08);
-        padding: 32px 16px;
+        padding: 24px 16px;
         text-align: center;
-        font-size: 12px;
-        color: #9ca3af;
-        margin-top: auto;
+        font-size: 11px;
+        color: #6b7280;
       }
-      .btn-partner {
-        display: inline-block;
-        background-color: #eab308;
-        color: #000;
-        font-size: 13px;
+      .btn-footer-contact {
+        background: #facc15;
+        color: #000 !important;
+        font-size: 12px;
         font-weight: 900;
-        padding: 11px 22px;
-        border-radius: 12px;
-        margin-bottom: 14px;
+        padding: 9px 18px;
+        border-radius: 10px;
+        margin-bottom: 12px;
       }
     </style>
 </head>
 <body>
+    <div class="wrap">
+        <!-- 상단 공지 -->
+        <div class="top-notice">
+          🔥 [실시간] {{ location_name }} 대기중 관리사 25분 내 초고속 도착! 100% 후불제 안심 케어
+        </div>
 
-    <!-- 상단 긴급 공지 배너 -->
-    <div class="urgent-banner">
-      🔥 [실시간] {{ location_name }} 대기중 관리사 25분 내 초고속 도착! 100% 후불제 안심 케어
-    </div>
-
-    <!-- 헤더 -->
-    <header>
-        <div class="header-content">
-            <a href="/" class="logo-box">
-                <div class="logo-img-wrapper">
-                    <div class="logo-img-inner">
-                        <img src="/logo.png" alt="바로홈타이 로고" onerror="this.style.display='none'">
-                    </div>
+        <!-- 헤더 -->
+        <header>
+            <a href="/" class="logo-area">
+                <div class="logo-img-box">
+                    <img src="/logo.png" alt="로고" onerror="this.style.display='none'">
                 </div>
                 <div>
-                    <span class="brand-title">바로홈타이</span>
-                    <span class="brand-sub">📍 {{ location_name }} 안내관</span>
+                    <div class="logo-title">바로홈타이</div>
+                    <div class="logo-sub">📍 {{ location_name }} 안내관</div>
                 </div>
             </a>
-            <a href="/" class="btn-main-link">메인으로 &gt;</a>
-        </div>
-    </header>
+            <a href="/" class="btn-header-home">메인으로 &gt;</a>
+        </header>
 
-    <!-- 메인 콘텐츠 -->
-    <main>
-        <!-- 상단 배너 섹션 -->
-        <section class="hero-section">
-            <div class="hero-card">
-                <img src="/banner.jpg" alt="바로홈타이 프리미엄 배너" class="hero-img">
-                <div class="hero-overlay">
-                    <span class="badge-discount">⚡ 지금 예약시 특별 힐링 혜택 적용!</span>
-                    <p class="hero-text">✨ {{ location_name }} 25분 내 신속 방문 케어</p>
+        <!-- 메인 콘텐츠 -->
+        <main>
+            <!-- 배너 -->
+            <div class="banner-box">
+                <img src="/banner.jpg" alt="배너" class="banner-img">
+                <div class="banner-overlay">
+                    <div class="banner-badge">⚡ 지금 예약시 특별 힐링 혜택 적용!</div>
+                    <div class="banner-txt">✨ {{ location_name }} 25분 내 신속 방문 케어</div>
                 </div>
             </div>
 
-            <h1 class="hero-title">
-                <span class="brand-title">{{ location_name }}</span><br />
+            <h1 class="intro-title">
+                <span>{{ location_name }}</span><br />
                 24시 프리미엄 홈타이·스웨디시
             </h1>
-            <p class="hero-desc">
-                {{ location_name }} 오피스텔, 자택 어디든 24시간 연중무휴 <strong style="color:#facc15; text-decoration: underline;">100% 후불제 안심 케어</strong>로 모십니다.
+            <p class="intro-desc">
+                {{ location_name }} 오피스텔, 자택 어디든 24시간 연중무휴 <strong style="color:#facc15;">100% 후불제 안심 케어</strong>로 모십니다.
             </p>
-        </section>
 
-        <!-- 🌟 제휴 업체 목록 삽입 영역 -->
-        {{ shop_list_section }}
+            <!-- 제휴샵 리스트 -->
+            {{ shop_list_section }}
 
-        <!-- 🌟 지역별 네비게이션 링크 삽입 영역 -->
-        {{ navigation_section }}
+            <!-- 지역 네비게이션 -->
+            {{ navigation_section }}
 
-        <!-- 하단 홈 이동 버튼 -->
-        <section class="bottom-home-box">
-            <p style="font-size:12px; color:#9ca3af; margin-bottom:8px;">다른 지역의 제휴점도 확인해보세요</p>
-            <a href="/" class="btn-home">&lt; 전국 메인으로 돌아가기</a>
-        </section>
-    </main>
+            <!-- 홈 버튼 -->
+            <div class="home-back-box">
+                <p style="font-size:11px; color:#9ca3af; margin-bottom:8px;">다른 지역의 제휴점도 확인해보세요</p>
+                <a href="/" class="btn-home-back">&lt; 전국 메인으로 돌아가기</a>
+            </div>
+        </main>
 
-    <!-- 푸터 -->
-    <footer>
-        <div class="container">
-            <a href="tel:0507-1280-3344" class="btn-partner">📞 제휴문의 0507-1280-3344</a>
+        <!-- 푸터 -->
+        <footer>
+            <a href="tel:0507-1280-3344" class="btn-footer-contact">📞 제휴문의 0507-1280-3344</a>
             <p style="font-weight:700; color:#9ca3af; margin-bottom:4px;">바로홈타이 ({{ location_name }} 전용관)</p>
-            <p style="font-size:11px; color:#6b7280;">COPYRIGHT &copy; 바로홈타이 ALL RIGHTS RESERVED.</p>
-        </div>
-    </footer>
+            <p>COPYRIGHT &copy; 바로홈타이 ALL RIGHTS RESERVED.</p>
+        </footer>
+    </div>
 </body>
 </html>

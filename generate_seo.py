@@ -3,7 +3,6 @@ import csv
 import re
 from urllib.parse import quote
 
-# 0. 도메인 설정
 SITE_URL = "https://xn--2z1b98p8yb63d.shop"
 
 with open("templates/base.html", "r", encoding="utf-8") as f:
@@ -117,8 +116,8 @@ for dist, towns in cheongju_data.items():
     for t in towns:
         add_town(dist, "cheongju", t)
 
-# 🌟 메인 네비게이션 (base.html의 nav-grid, nav-btn 클래스와 100% 일치)
-main_nav_html = '<section class="nav-section"><h2 class="nav-title">📍 전국 지역별 전문관</h2>'
+# 네비게이션 섹션
+main_nav_html = '<section class="nav-panel"><h2 class="nav-panel-title">📍 전국 지역별 전문관</h2>'
 seoul_dists = [d for d, c in district_to_city.items() if c == "seoul"]
 incheon_dists = [d for d, c in district_to_city.items() if c == "incheon"]
 gyeonggi_dists = [d for d, c in district_to_city.items() if c == "gyeonggi"]
@@ -126,38 +125,38 @@ daejeon_dists = [d for d, c in district_to_city.items() if c == "daejeon"]
 cheongju_dists = [d for d, c in district_to_city.items() if c == "cheongju"]
 
 if seoul_dists:
-    main_nav_html += '<div class="nav-city-title">🏙️ 서울특별시</div><div class="nav-grid">'
+    main_nav_html += '<div class="nav-city-heading">🏙️ 서울특별시</div><div class="nav-grid-box">'
     for dist in seoul_dists:
-        main_nav_html += f'<a href="/output/seoul/{dist}/index.html" class="nav-btn">{dist}</a>'
+        main_nav_html += f'<a href="/output/seoul/{dist}/index.html" class="nav-link-btn">{dist}</a>'
     main_nav_html += '</div>'
 
 if incheon_dists:
-    main_nav_html += '<div class="nav-city-title">⚓ 인천광역시</div><div class="nav-grid">'
+    main_nav_html += '<div class="nav-city-heading">⚓ 인천광역시</div><div class="nav-grid-box">'
     for dist in incheon_dists:
-        main_nav_html += f'<a href="/output/incheon/{dist}/index.html" class="nav-btn">{dist}</a>'
+        main_nav_html += f'<a href="/output/incheon/{dist}/index.html" class="nav-link-btn">{dist}</a>'
     main_nav_html += '</div>'
 
 if gyeonggi_dists:
-    main_nav_html += '<div class="nav-city-title">🏡 경기도</div><div class="nav-grid">'
+    main_nav_html += '<div class="nav-city-heading">🏡 경기도</div><div class="nav-grid-box">'
     for dist in gyeonggi_dists:
-        main_nav_html += f'<a href="/output/gyeonggi/{dist}/index.html" class="nav-btn">{dist}</a>'
+        main_nav_html += f'<a href="/output/gyeonggi/{dist}/index.html" class="nav-link-btn">{dist}</a>'
     main_nav_html += '</div>'
 
 if daejeon_dists:
-    main_nav_html += '<div class="nav-city-title">🌟 대전광역시 (프리미엄 전용)</div><div class="nav-grid">'
+    main_nav_html += '<div class="nav-city-heading">🌟 대전광역시</div><div class="nav-grid-box">'
     for dist in daejeon_dists:
-        main_nav_html += f'<a href="/output/daejeon/{dist}/index.html" class="nav-btn">{dist}</a>'
+        main_nav_html += f'<a href="/output/daejeon/{dist}/index.html" class="nav-link-btn">{dist}</a>'
     main_nav_html += '</div>'
 
 if cheongju_dists:
-    main_nav_html += '<div class="nav-city-title">🌿 청주시 (프리미엄 전용)</div><div class="nav-grid">'
+    main_nav_html += '<div class="nav-city-heading">🌿 청주시</div><div class="nav-grid-box">'
     for dist in cheongju_dists:
-        main_nav_html += f'<a href="/output/cheongju/{dist}/index.html" class="nav-btn">{dist}</a>'
+        main_nav_html += f'<a href="/output/cheongju/{dist}/index.html" class="nav-link-btn">{dist}</a>'
     main_nav_html += '</div>'
 
 main_nav_html += '</section>'
 
-# 🌟 5개 제휴샵 (base.html의 CSS 클래스와 100% 일치)
+# 제휴샵 목록 생성
 def get_default_five_shops(location_str):
     shops_data = [
         {"name": "한국미인홈케어", "tag": "🔥 추천업체", "img": "/images/shop1.jpg", "desc": "24시 정성 가득한 타이 & 아로마 전문 프리미엄 케어", "course1": "아로디시 관리 (60분)", "price1": "90,000원", "course2": "스웨디시 케어 (60분)", "price2": "140,000원", "tel": "0507-1280-3278"},
@@ -167,37 +166,37 @@ def get_default_five_shops(location_str):
         {"name": "퀸즈 홈테라피", "tag": "🔥 만족도1위", "img": "/images/shop5.jpg", "desc": "후불제 안심 이용, 전지역 25분 내 초고속 도착", "course1": "타이 코스 (60분)", "price1": "60,000원", "course2": "스웨디시 코스 (60분)", "price2": "140,000원", "tel": "0507-1280-3192"}
     ]
     
-    html = '<section class="shop-list">'
+    html = '<section class="shop-card-list">'
     for s in shops_data:
         html += f'''
-        <article class="shop-card">
-            <div class="shop-card-img-wrap">
+        <article class="shop-card-item">
+            <div class="shop-card-thumb">
                 <img src="{s['img']}" alt="{s['name']}">
-                <div class="shop-card-gradient"></div>
-                <div class="shop-card-badges">
-                    <span class="badge-fire">{s['tag']}</span>
-                    <span class="badge-safe">후불제 안심</span>
+                <div class="shop-card-thumb-grad"></div>
+                <div class="shop-card-tags">
+                    <span class="badge-tag-fire">{s['tag']}</span>
+                    <span class="badge-tag-safe">후불제 안심</span>
                 </div>
-                <div class="shop-card-header">
+                <div class="shop-card-info-top">
                     <h2 class="shop-card-name">{s['name']}</h2>
-                    <p class="shop-card-loc">📍 {location_str} 전지역 신속 출동</p>
+                    <p class="shop-card-region">📍 {location_str} 전지역 신속 출동</p>
                 </div>
             </div>
-            <div class="shop-card-body">
+            <div class="shop-card-content">
                 <p class="shop-card-desc">{s['desc']}</p>
-                <div class="course-box">
-                    <div class="course-box-title">✨ 프로그램 및 요금 안내</div>
-                    <div class="course-row">
+                <div class="price-box">
+                    <div class="price-box-title">✨ 프로그램 및 요금 안내</div>
+                    <div class="price-row">
                         <span>{s['course1']}</span>
-                        <span class="course-price">{s['price1']}</span>
+                        <span class="price-val">{s['price1']}</span>
                     </div>
-                    <div class="course-row">
+                    <div class="price-row">
                         <span>{s['course2']}</span>
-                        <span class="course-price">{s['price2']}</span>
+                        <span class="price-val">{s['price2']}</span>
                     </div>
                 </div>
-                <div class="btn-grid">
-                    <a href="tel:{s['tel']}" class="btn-call">📞 전화 문의하기</a>
+                <div class="btn-action-group">
+                    <a href="tel:{s['tel']}" class="btn-tel">📞 전화 문의하기</a>
                     <a href="sms:{s['tel']}?body=%5B바로홈타이%20-%20{location_str}%5D%20{s['name']}%20문의드립니다." class="btn-sms">💬 문자 예약하기</a>
                 </div>
             </div>
@@ -206,50 +205,47 @@ def get_default_five_shops(location_str):
     html += '</section>'
     return html
 
-# 🌟 대전/청주 2개 제휴샵 (base.html의 CSS와 일치)
 def get_two_shops(location_str):
     return f'''
-    <section style="width:100%;">
-        <div style="text-align:center; margin-bottom:24px;">
-            <span class="badge-safe" style="display:inline-block; margin-bottom:8px;">VERIFIED PREMIUM SHOPS</span>
-            <h3 style="font-size:22px; font-weight:900; color:#fff;">✨ {location_str} 엄선 추천 제휴점</h3>
+    <section class="shop-card-list">
+        <div style="text-align:center; margin-bottom:10px;">
+            <span class="badge-tag-safe" style="display:inline-block; margin-bottom:6px;">VERIFIED PREMIUM SHOPS</span>
+            <h3 style="font-size:18px; font-weight:900; color:#fff;">✨ {location_str} 엄선 추천 제휴점</h3>
         </div>
 
-        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:20px;">
-            <!-- 1. S슬림홈타이 -->
-            <div class="shop-card" style="padding:20px; display:flex; flex-direction:column; justify-content:space-between;">
-                <div>
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                        <span style="color:#facc15; font-size:12px; font-weight:700;">★★★★★ 5.0</span>
-                        <span class="badge-fire">BEST</span>
-                    </div>
-                    <h4 style="font-size:20px; font-weight:900; color:#fff; margin-bottom:4px;">S슬림홈타이</h4>
-                    <p style="font-size:12px; color:#facc15; font-weight:700; margin-bottom:14px;">슬림 케어 & 프리미엄 맞춤 힐링</p>
-                    <div class="course-box" style="font-size:12px; color:#d1d5db; margin-bottom:16px;">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span>⏰ 영업시간</span><strong style="color:#fff;">24시간 연중무휴</strong></div>
-                        <div style="display:flex; justify-content:space-between;"><span>🚗 방문지역</span><strong style="color:#fff;">{location_str} 전지역</strong></div>
-                    </div>
+        <!-- 1. S슬림홈타이 -->
+        <article class="shop-card-item">
+            <div class="shop-card-content">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                    <span style="color:#facc15; font-size:12px; font-weight:700;">★★★★★ 5.0</span>
+                    <span class="badge-tag-fire">BEST</span>
                 </div>
-                <a href="tel:0507-1280-3342" class="btn-call" style="width:100%;">📞 전화 예약 (0507-1280-3342)</a>
+                <h4 style="font-size:18px; font-weight:900; color:#fff; margin-bottom:2px;">S슬림홈타이</h4>
+                <p style="font-size:11px; color:#facc15; font-weight:700; margin-bottom:12px;">슬림 케어 & 프리미엄 맞춤 힐링</p>
+                <div class="price-box" style="font-size:11px;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>⏰ 영업시간</span><strong style="color:#fff;">24시간 연중무휴</strong></div>
+                    <div style="display:flex; justify-content:space-between;"><span>🚗 방문지역</span><strong style="color:#fff;">{location_str} 전지역</strong></div>
+                </div>
+                <a href="tel:0507-1280-3342" class="btn-tel" style="display:block;">📞 전화 예약 (0507-1280-3342)</a>
             </div>
+        </article>
 
-            <!-- 2. 사쿠라 홈타이 -->
-            <div class="shop-card" style="padding:20px; display:flex; flex-direction:column; justify-content:space-between;">
-                <div>
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                        <span style="color:#facc15; font-size:12px; font-weight:700;">★★★★★ 4.9</span>
-                        <span class="badge-fire">POPULAR</span>
-                    </div>
-                    <h4 style="font-size:20px; font-weight:900; color:#fff; margin-bottom:4px;">사쿠라 홈타이</h4>
-                    <p style="font-size:12px; color:#facc15; font-weight:700; margin-bottom:14px;">신속 방문 & 편안한 아로마 케어</p>
-                    <div class="course-box" style="font-size:12px; color:#d1d5db; margin-bottom:16px;">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span>⏰ 영업시간</span><strong style="color:#fff;">24시간 연중무휴</strong></div>
-                        <div style="display:flex; justify-content:space-between;"><span>🚗 방문지역</span><strong style="color:#fff;">{location_str} 전지역</strong></div>
-                    </div>
+        <!-- 2. 사쿠라 홈타이 -->
+        <article class="shop-card-item">
+            <div class="shop-card-content">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                    <span style="color:#facc15; font-size:12px; font-weight:700;">★★★★★ 4.9</span>
+                    <span class="badge-tag-fire">POPULAR</span>
                 </div>
-                <a href="tel:0507-1280-3343" class="btn-call" style="width:100%;">📞 전화 예약 (0507-1280-3343)</a>
+                <h4 style="font-size:18px; font-weight:900; color:#fff; margin-bottom:2px;">사쿠라 홈타이</h4>
+                <p style="font-size:11px; color:#facc15; font-weight:700; margin-bottom:12px;">신속 방문 & 편안한 아로마 케어</p>
+                <div class="price-box" style="font-size:11px;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>⏰ 영업시간</span><strong style="color:#fff;">24시간 연중무휴</strong></div>
+                    <div style="display:flex; justify-content:space-between;"><span>🚗 방문지역</span><strong style="color:#fff;">{location_str} 전지역</strong></div>
+                </div>
+                <a href="tel:0507-1280-3343" class="btn-tel" style="display:block;">📞 전화 예약 (0507-1280-3343)</a>
             </div>
-        </div>
+        </article>
     </section>
     '''
 
@@ -263,7 +259,7 @@ def make_page_html(location_str, nav_html, rel_path_to_root, page_url_path="", i
     else:
         seo_title = f"{location_str} 바로홈타이 | 24시 신속 방문·후불제 안심 추천"
         seo_desc = f"[바로홈타이] {location_str} 24시 연중무휴! 자택 및 오피스텔 25분 내 초고속 도착. 검증된 프라이빗 스웨디시 & 아로마 후불제 안심 케어."
-        seo_keywords = f"{location_str}바로홈타이, {{location_str}}출장마사지, {{location_str}}홈타이, {{location_str}}스웨디시, 바로홈타이"
+        seo_keywords = f"{location_str}바로홈타이, {location_str}출장마사지, {location_str}홈타이, {location_str}스웨디시, 바로홈타이"
         
     canonical_url = f"{SITE_URL}{page_url_path}"
     
@@ -293,14 +289,14 @@ def make_page_html(location_str, nav_html, rel_path_to_root, page_url_path="", i
 
     return page_html
 
-# 메인 페이지 생성
+# 메인 생성
 root_main_html = make_page_html("전국 주요 지역", main_nav_html, "", page_url_path="/", is_main=True)
 with open("index.html", "w", encoding="utf-8") as out:
     out.write(root_main_html)
 with open(os.path.join(output_dir, "index.html"), "w", encoding="utf-8") as out:
     out.write(root_main_html)
 
-# 구 및 동 페이지 생성
+# 구 및 동 생성
 total_towns = 0
 created_districts = 0
 
@@ -321,9 +317,9 @@ for district_name, city in district_to_city.items():
     dist_location = f"{city_name} {district_name}"
     towns_in_dist = district_to_towns.get(district_name, [])
     
-    towns_nav = f'<section class="nav-section"><h2 class="nav-title">📍 {district_name} 세부 지역별 안내</h2><div class="nav-grid">'
+    towns_nav = f'<section class="nav-panel"><h2 class="nav-panel-title">📍 {district_name} 세부 지역별 안내</h2><div class="nav-grid-box">'
     for t in towns_in_dist:
-        towns_nav += f'<a href="{t}/index.html" class="nav-btn">{t}</a>'
+        towns_nav += f'<a href="{t}/index.html" class="nav-link-btn">{t}</a>'
     towns_nav += '</div></section>'
     
     dist_path = f"/output/{city}/{district_name}/index.html"
@@ -353,15 +349,10 @@ for district_name, city in district_to_city.items():
         encoded_town_url = f"{SITE_URL}/output/{city}/{quote(district_name)}/{quote(town_name)}/index.html"
         all_page_urls.append(encoded_town_url)
 
-# robots.txt
-robots_content = f"""User-agent: *
-Allow: /
-Sitemap: {SITE_URL}/sitemap.xml
-"""
+# robots.txt & sitemap.xml
 with open("robots.txt", "w", encoding="utf-8") as f:
-    f.write(robots_content)
+    f.write(f"User-agent: *\nAllow: /\nSitemap: {SITE_URL}/sitemap.xml\n")
 
-# sitemap.xml
 sitemap_xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
 for url in all_page_urls:
     priority = "1.0" if url == f"{SITE_URL}/" else "0.8"
@@ -371,4 +362,4 @@ sitemap_xml += '</urlset>'
 with open("sitemap.xml", "w", encoding="utf-8") as f:
     f.write(sitemap_xml)
 
-print(f"✨ 배열 및 구조 완벽 복구 완료! (구: {created_districts}개, 동: {total_towns}개)")
+print(f"✨ 모바일/PC 고정 최적화 완료! (구: {created_districts}개, 동: {total_towns}개)")
