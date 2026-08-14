@@ -13,10 +13,10 @@ with open("templates/base.html", "r", encoding="utf-8") as f:
 output_dir = "output"
 os.makedirs(output_dir, exist_ok=True)
 
-# 생성된 모든 페이지의 URL을 담을 리스트 (사이트맵 생성용)
+# 생성된 모든 페이지의 URL을 담을 리스트
 all_page_urls = [f"{SITE_URL}/"]
 
-# 2. 동 이름 통일 함수 (숫자 제거)
+# 2. 동 이름 정규화 함수
 def normalize_dong_name(name):
     name = name.strip()
     name = re.sub(r'\d+동$', '동', name)
@@ -121,8 +121,8 @@ for dist, towns in cheongju_data.items():
     for t in towns:
         add_town(dist, "cheongju", t)
 
-# 3. 최상위 메인 화면 네비게이션 생성
-main_nav_html = '<div class="max-w-5xl mx-auto px-4 py-8"><h2 class="text-xl font-black text-white mb-6 text-center">📍 전국 지역별 전문관</h2>'
+# 3. 최상위 메인 네비게이션 생성
+main_nav_html = '<section class="mt-12 bg-[#141418] border border-gold-500/20 rounded-3xl p-6 shadow-xl"><h2 class="text-xl font-black text-white mb-6 text-center">📍 전국 지역별 전문관</h2>'
 seoul_dists = [d for d, c in district_to_city.items() if c == "seoul"]
 incheon_dists = [d for d, c in district_to_city.items() if c == "incheon"]
 gyeonggi_dists = [d for d, c in district_to_city.items() if c == "gyeonggi"]
@@ -159,14 +159,216 @@ if cheongju_dists:
         main_nav_html += f'<a href="/output/cheongju/{dist}/index.html" class="bg-[#18181c] border border-gold-500/30 hover:border-gold-400 text-gray-200 hover:text-gold-400 py-2.5 px-2 rounded-xl text-xs font-bold text-center transition-all shadow-sm">{dist}</a>'
     main_nav_html += '</div>'
 
-main_nav_html += '</div>'
+main_nav_html += '</section>'
 
+# 기본 5개 제휴샵 템플릿
+def get_default_five_shops(location_str):
+    return f'''
+    <section class="space-y-6">
+        <!-- 1. 한국미인홈케어 -->
+        <article class="bg-[#18181c] border border-gold-500/30 rounded-3xl overflow-hidden shadow-2xl hover:border-gold-400 transition-all duration-300 group">
+            <div class="relative h-44 md:h-52 overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-t from-[#18181c] via-transparent to-black/30 z-10"></div>
+                <img src="/images/shop1.jpg" alt="한국미인홈케어" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90">
+                <div class="absolute top-3 left-3 z-20 flex gap-2">
+                    <span class="text-[11px] bg-gold-400 text-black font-black px-3 py-1 rounded-full shadow-md">🔥 추천업체</span>
+                    <span class="text-[11px] bg-black/70 backdrop-blur-md text-gold-300 font-bold px-3 py-1 rounded-full border border-gold-500/40">후불제 안심</span>
+                </div>
+                <div class="absolute bottom-3 left-4 right-4 z-20 flex justify-between items-end">
+                    <div>
+                        <h2 class="text-2xl font-black text-white group-hover:text-gold-400 transition-colors drop-shadow-md">한국미인홈케어</h2>
+                        <p class="text-xs text-gold-400 font-bold mt-0.5">📍 {location_str} 전지역 신속 출동</p>
+                    </div>
+                </div>
+            </div>
+            <div class="p-5 md:p-6">
+                <p class="text-xs md:text-sm text-gray-200 mb-4 leading-relaxed font-medium">24시 정성 가득한 타이 & 아로마 전문 프리미엄 케어</p>
+                <div class="bg-black/50 rounded-2xl p-4 mb-5 space-y-2.5 border border-white/5">
+                    <div class="text-[11px] font-bold uppercase tracking-wider mb-1 text-gold-400">✨ 프로그램 및 코스 안내</div>
+                    <div class="flex justify-between text-xs md:text-sm items-center py-1.5 border-b border-white/5"><span class="text-gray-200 font-medium">아로디시 관리 (60분)</span><span class="font-black text-gold-400 bg-gold-500/10 px-2.5 py-1 rounded-lg border border-gold-500/30">90,000원</span></div>
+                    <div class="flex justify-between text-xs md:text-sm items-center py-1.5"><span class="text-gray-200 font-medium">스웨디시 케어 (60분)</span><span class="font-black text-gold-400 bg-gold-500/10 px-2.5 py-1 rounded-lg border border-gold-500/30">140,000원</span></div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <a href="tel:0507-1280-3278" class="flex items-center justify-center gap-2 bg-gradient-to-r from-gold-500 to-amber-500 hover:from-gold-400 hover:to-amber-400 text-black font-black py-3.5 rounded-2xl text-xs md:text-sm transition-all shadow-lg shadow-gold-500/20 active:scale-95">📞 전화 문의하기</a>
+                    <a href="sms:0507-1280-3278?body=%5B바로홈타이%20-%20{location_str}%5D%20한국미인홈케어%20문의드립니다." class="flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white font-bold py-3.5 rounded-2xl text-xs md:text-sm border border-white/20 transition-all active:scale-95">💬 문자 예약하기</a>
+                </div>
+            </div>
+        </article>
 
-# 4. 페이지 생성 함수 (메인 vs 구/동 SEO 분리 적용)
+        <!-- 2. 기쁨홈타이 -->
+        <article class="bg-[#18181c] border border-gold-500/30 rounded-3xl overflow-hidden shadow-2xl hover:border-gold-400 transition-all duration-300 group">
+            <div class="relative h-44 md:h-52 overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-t from-[#18181c] via-transparent to-black/30 z-10"></div>
+                <img src="/images/shop2.jpg" alt="기쁨홈타이" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90">
+                <div class="absolute top-3 left-3 z-20 flex gap-2">
+                    <span class="text-[11px] bg-gold-400 text-black font-black px-3 py-1 rounded-full shadow-md">🔥 인기폭발</span>
+                    <span class="text-[11px] bg-black/70 backdrop-blur-md text-gold-300 font-bold px-3 py-1 rounded-full border border-gold-500/40">후불제 안심</span>
+                </div>
+                <div class="absolute bottom-3 left-4 right-4 z-20 flex justify-between items-end">
+                    <div>
+                        <h2 class="text-2xl font-black text-white group-hover:text-gold-400 transition-colors drop-shadow-md">기쁨홈타이</h2>
+                        <p class="text-xs text-gold-400 font-bold mt-0.5">📍 {location_str} 전지역 신속 출동</p>
+                    </div>
+                </div>
+            </div>
+            <div class="p-5 md:p-6">
+                <p class="text-xs md:text-sm text-gray-200 mb-4 leading-relaxed font-medium">지친 일상에 편안한 휴식을 선사하는 고품격 힐링샵</p>
+                <div class="bg-black/50 rounded-2xl p-4 mb-5 space-y-2.5 border border-white/5">
+                    <div class="text-[11px] font-bold uppercase tracking-wider mb-1 text-gold-400">✨ 프로그램 및 코스 안내</div>
+                    <div class="flex justify-between text-xs md:text-sm items-center py-1.5 border-b border-white/5"><span class="text-gray-200 font-medium">건식 코스 (60분)</span><span class="font-black text-gold-400 bg-gold-500/10 px-2.5 py-1 rounded-lg border border-gold-500/30">60,000원</span></div>
+                    <div class="flex justify-between text-xs md:text-sm items-center py-1.5"><span class="text-gray-200 font-medium">스웨디시 (60분)</span><span class="font-black text-gold-400 bg-gold-500/10 px-2.5 py-1 rounded-lg border border-gold-500/30">140,000원</span></div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <a href="tel:0507-1280-3187" class="flex items-center justify-center gap-2 bg-gradient-to-r from-gold-500 to-amber-500 hover:from-gold-400 hover:to-amber-400 text-black font-black py-3.5 rounded-2xl text-xs md:text-sm transition-all shadow-lg shadow-gold-500/20 active:scale-95">📞 전화 문의하기</a>
+                    <a href="sms:0507-1280-3187?body=%5B바로홈타이%20-%20{location_str}%5D%20기쁨홈타이%20문의드립니다." class="flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white font-bold py-3.5 rounded-2xl text-xs md:text-sm border border-white/20 transition-all active:scale-95">💬 문자 예약하기</a>
+                </div>
+            </div>
+        </article>
+
+        <!-- 3. 어린마인드홈타이 -->
+        <article class="bg-[#18181c] border border-gold-500/30 rounded-3xl overflow-hidden shadow-2xl hover:border-gold-400 transition-all duration-300 group">
+            <div class="relative h-44 md:h-52 overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-t from-[#18181c] via-transparent to-black/30 z-10"></div>
+                <img src="/images/shop3.jpg" alt="어린마인드홈타이" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90">
+                <div class="absolute top-3 left-3 z-20 flex gap-2">
+                    <span class="text-[11px] bg-gold-400 text-black font-black px-3 py-1 rounded-full shadow-md">🔥 24시상시</span>
+                    <span class="text-[11px] bg-black/70 backdrop-blur-md text-gold-300 font-bold px-3 py-1 rounded-full border border-gold-500/40">후불제 안심</span>
+                </div>
+                <div class="absolute bottom-3 left-4 right-4 z-20 flex justify-between items-end">
+                    <div>
+                        <h2 class="text-2xl font-black text-white group-hover:text-gold-400 transition-colors drop-shadow-md">어린마인드홈타이</h2>
+                        <p class="text-xs text-gold-400 font-bold mt-0.5">📍 {location_str} 전지역 신속 출동</p>
+                    </div>
+                </div>
+            </div>
+            <div class="p-5 md:p-6">
+                <p class="text-xs md:text-sm text-gray-200 mb-4 leading-relaxed font-medium">빠른 방문과 철저한 위생 관리를 약속드리는 안심 서비스</p>
+                <div class="bg-black/50 rounded-2xl p-4 mb-5 space-y-2.5 border border-white/5">
+                    <div class="text-[11px] font-bold uppercase tracking-wider mb-1 text-gold-400">✨ 프로그램 및 코스 안내</div>
+                    <div class="flex justify-between text-xs md:text-sm items-center py-1.5 border-b border-white/5"><span class="text-gray-200 font-medium">타이/아로마 (60분)</span><span class="font-black text-gold-400 bg-gold-500/10 px-2.5 py-1 rounded-lg border border-gold-500/30">60,000원</span></div>
+                    <div class="flex justify-between text-xs md:text-sm items-center py-1.5"><span class="text-gray-200 font-medium">한국 스웨디시케어 (60분)</span><span class="font-black text-gold-400 bg-gold-500/10 px-2.5 py-1 rounded-lg border border-gold-500/30">140,000원</span></div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <a href="tel:0507-1280-3173" class="flex items-center justify-center gap-2 bg-gradient-to-r from-gold-500 to-amber-500 hover:from-gold-400 hover:to-amber-400 text-black font-black py-3.5 rounded-2xl text-xs md:text-sm transition-all shadow-lg shadow-gold-500/20 active:scale-95">📞 전화 문의하기</a>
+                    <a href="sms:0507-1280-3173?body=%5B바로홈타이%20-%20{location_str}%5D%20어린마인드홈타이%20문의드립니다." class="flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white font-bold py-3.5 rounded-2xl text-xs md:text-sm border border-white/20 transition-all active:scale-95">💬 문자 예약하기</a>
+                </div>
+            </div>
+        </article>
+
+        <!-- 4. 미인클럽홈타이 -->
+        <article class="bg-[#18181c] border border-gold-500/30 rounded-3xl overflow-hidden shadow-2xl hover:border-gold-400 transition-all duration-300 group">
+            <div class="relative h-44 md:h-52 overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-t from-[#18181c] via-transparent to-black/30 z-10"></div>
+                <img src="/images/shop4.jpg" alt="미인클럽홈타이" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90">
+                <div class="absolute top-3 left-3 z-20 flex gap-2">
+                    <span class="text-[11px] bg-gold-400 text-black font-black px-3 py-1 rounded-full shadow-md">🔥 신규제휴</span>
+                    <span class="text-[11px] bg-black/70 backdrop-blur-md text-gold-300 font-bold px-3 py-1 rounded-full border border-gold-500/40">후불제 안심</span>
+                </div>
+                <div class="absolute bottom-3 left-4 right-4 z-20 flex justify-between items-end">
+                    <div>
+                        <h2 class="text-2xl font-black text-white group-hover:text-gold-400 transition-colors drop-shadow-md">미인클럽홈타이</h2>
+                        <p class="text-xs text-gold-400 font-bold mt-0.5">📍 {location_str} 전지역 신속 출동</p>
+                    </div>
+                </div>
+            </div>
+            <div class="p-5 md:p-6">
+                <p class="text-xs md:text-sm text-gray-200 mb-4 leading-relaxed font-medium">베테랑 관리사의 맞춤형 피로 회복 케어 프로그램</p>
+                <div class="bg-black/50 rounded-2xl p-4 mb-5 space-y-2.5 border border-white/5">
+                    <div class="text-[11px] font-bold uppercase tracking-wider mb-1 text-gold-400">✨ 프로그램 및 코스 안내</div>
+                    <div class="flex justify-between text-xs md:text-sm items-center py-1.5 border-b border-white/5"><span class="text-gray-200 font-medium">타이코스 (60분)</span><span class="font-black text-gold-400 bg-gold-500/10 px-2.5 py-1 rounded-lg border border-gold-500/30">60,000원</span></div>
+                    <div class="flex justify-between text-xs md:text-sm items-center py-1.5"><span class="text-gray-200 font-medium">한국스웨디시 (90분)</span><span class="font-black text-gold-400 bg-gold-500/10 px-2.5 py-1 rounded-lg border border-gold-500/30">140,000원</span></div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <a href="tel:0507-1280-3176" class="flex items-center justify-center gap-2 bg-gradient-to-r from-gold-500 to-amber-500 hover:from-gold-400 hover:to-amber-400 text-black font-black py-3.5 rounded-2xl text-xs md:text-sm transition-all shadow-lg shadow-gold-500/20 active:scale-95">📞 전화 문의하기</a>
+                    <a href="sms:0507-1280-3176?body=%5B바로홈타이%20-%20{location_str}%5D%20미인클럽홈타이%20문의드립니다." class="flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white font-bold py-3.5 rounded-2xl text-xs md:text-sm border border-white/20 transition-all active:scale-95">💬 문자 예약하기</a>
+                </div>
+            </div>
+        </article>
+
+        <!-- 5. 퀸즈 홈테라피 -->
+        <article class="bg-[#18181c] border border-gold-500/30 rounded-3xl overflow-hidden shadow-2xl hover:border-gold-400 transition-all duration-300 group">
+            <div class="relative h-44 md:h-52 overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-t from-[#18181c] via-transparent to-black/30 z-10"></div>
+                <img src="/images/shop5.jpg" alt="퀸즈 홈테라피" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90">
+                <div class="absolute top-3 left-3 z-20 flex gap-2">
+                    <span class="text-[11px] bg-gold-400 text-black font-black px-3 py-1 rounded-full shadow-md">🔥 만족도1위</span>
+                    <span class="text-[11px] bg-black/70 backdrop-blur-md text-gold-300 font-bold px-3 py-1 rounded-full border border-gold-500/40">후불제 안심</span>
+                </div>
+                <div class="absolute bottom-3 left-4 right-4 z-20 flex justify-between items-end">
+                    <div>
+                        <h2 class="text-2xl font-black text-white group-hover:text-gold-400 transition-colors drop-shadow-md">퀸즈 홈테라피</h2>
+                        <p class="text-xs text-gold-400 font-bold mt-0.5">📍 {location_str} 전지역 신속 출동</p>
+                    </div>
+                </div>
+            </div>
+            <div class="p-5 md:p-6">
+                <p class="text-xs md:text-sm text-gray-200 mb-4 leading-relaxed font-medium">후불제 안심 이용, 전지역 25분 내 초고속 도착</p>
+                <div class="bg-black/50 rounded-2xl p-4 mb-5 space-y-2.5 border border-white/5">
+                    <div class="text-[11px] font-bold uppercase tracking-wider mb-1 text-gold-400">✨ 프로그램 및 코스 안내</div>
+                    <div class="flex justify-between text-xs md:text-sm items-center py-1.5 border-b border-white/5"><span class="text-gray-200 font-medium">타이 코스 (60분)</span><span class="font-black text-gold-400 bg-gold-500/10 px-2.5 py-1 rounded-lg border border-gold-500/30">60,000원</span></div>
+                    <div class="flex justify-between text-xs md:text-sm items-center py-1.5"><span class="text-gray-200 font-medium">스웨디시 코스 (60분)</span><span class="font-black text-gold-400 bg-gold-500/10 px-2.5 py-1 rounded-lg border border-gold-500/30">140,000원</span></div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <a href="tel:0507-1280-3192" class="flex items-center justify-center gap-2 bg-gradient-to-r from-gold-500 to-amber-500 hover:from-gold-400 hover:to-amber-400 text-black font-black py-3.5 rounded-2xl text-xs md:text-sm transition-all shadow-lg shadow-gold-500/20 active:scale-95">📞 전화 문의하기</a>
+                    <a href="sms:0507-1280-3192?body=%5B바로홈타이%20-%20{location_str}%5D%20퀸즈%20홈테라피%20문의드립니다." class="flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white font-bold py-3.5 rounded-2xl text-xs md:text-sm border border-white/20 transition-all active:scale-95">💬 문자 예약하기</a>
+                </div>
+            </div>
+        </article>
+    </section>
+    '''
+
+# 대전/청주 2개 제휴샵 템플릿
+def get_two_shops(location_str):
+    return f'''
+    <section class="space-y-6">
+        <div class="text-center mb-8">
+            <span class="inline-block bg-gold-500/10 border border-gold-500/30 text-gold-400 text-xs px-3 py-1 rounded-full font-bold mb-2">VERIFIED PREMIUM SHOPS</span>
+            <h3 class="text-2xl font-black text-white">✨ {location_str} 엄선 추천 제휴점</h3>
+            <p class="text-gray-400 text-xs mt-1">바로홈타이가 직접 검증한 프리미엄 케어 샵입니다.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- 1. S슬림홈타이 -->
+            <div class="bg-gradient-to-b from-[#1c1c24] to-[#121218] border border-gold-500/40 rounded-2xl p-6 shadow-2xl relative overflow-hidden transition-all hover:border-gold-400">
+                <div class="absolute top-0 right-0 bg-gold-500 text-black text-[11px] font-black px-3 py-1 rounded-bl-xl shadow-md">★ BEST PREFERRED</div>
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="text-yellow-400 text-sm">★★★★★</span>
+                    <span class="text-gold-400 text-xs font-bold">5.0</span>
+                    <span class="text-gray-500 text-xs">(리뷰 최상위)</span>
+                </div>
+                <h4 class="text-2xl font-black text-white tracking-tight mb-1">S슬림홈타이</h4>
+                <p class="text-gold-400 text-xs font-semibold mb-4">슬림 케어 & 프리미엄 맞춤 힐링 전문</p>
+                <div class="bg-[#14141a] p-3.5 rounded-xl border border-white/5 mb-5 text-xs text-gray-300 space-y-1.5">
+                    <div class="flex items-center justify-between"><span class="text-gray-400">⏰ 영업시간</span><span class="font-bold text-white">24시간 연중무휴</span></div>
+                    <div class="flex items-center justify-between"><span class="text-gray-400">🚗 방문지역</span><span class="font-bold text-white">{location_str} 전지역 신속 이동</span></div>
+                </div>
+                <a href="tel:0507-1280-3342" class="flex items-center justify-center gap-2 w-full bg-gold-500 hover:bg-gold-600 text-black font-black py-3.5 rounded-xl text-base transition-all shadow-lg shadow-gold-500/20 active:scale-95">📞 전화 예약하기 (0507-1280-3342)</a>
+            </div>
+
+            <!-- 2. 사쿠라 홈타이 -->
+            <div class="bg-gradient-to-b from-[#1c1c24] to-[#121218] border border-gold-500/40 rounded-2xl p-6 shadow-2xl relative overflow-hidden transition-all hover:border-gold-400">
+                <div class="absolute top-0 right-0 bg-gold-500 text-black text-[11px] font-black px-3 py-1 rounded-bl-xl shadow-md">★ POPULAR CHOICE</div>
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="text-yellow-400 text-sm">★★★★★</span>
+                    <span class="text-gold-400 text-xs font-bold">4.9</span>
+                    <span class="text-gray-500 text-xs">(만족도 우수)</span>
+                </div>
+                <h4 class="text-2xl font-black text-white tracking-tight mb-1">사쿠라 홈타이</h4>
+                <p class="text-gold-400 text-xs font-semibold mb-4">신속 방문 & 편안한 아로마 케어</p>
+                <div class="bg-[#14141a] p-3.5 rounded-xl border border-white/5 mb-5 text-xs text-gray-300 space-y-1.5">
+                    <div class="flex items-center justify-between"><span class="text-gray-400">⏰ 영업시간</span><span class="font-bold text-white">24시간 연중무휴</span></div>
+                    <div class="flex items-center justify-between"><span class="text-gray-400">🚗 방문지역</span><span class="font-bold text-white">{location_str} 전지역 빠른 방문</span></div>
+                </div>
+                <a href="tel:0507-1280-3343" class="flex items-center justify-center gap-2 w-full bg-gold-500 hover:bg-gold-600 text-black font-black py-3.5 rounded-xl text-base transition-all shadow-lg shadow-gold-500/20 active:scale-95">📞 전화 예약하기 (0507-1280-3343)</a>
+            </div>
+        </div>
+    </section>
+    '''
+
+# 4. 페이지 생성 함수 (안전한 플레이스홀더 치환 방식)
 def make_page_html(location_str, nav_html, rel_path_to_root, page_url_path="", is_main=False, is_two_shop_region=False):
     page_html = template_content
     
-    # 🌟 메인 페이지 vs 구/동 상세 페이지 SEO 태그 분리
     if is_main:
         seo_title = "바로홈타이 | 전국 24시 프리미엄 홈케어 및 힐링 가이드"
         seo_desc = "바로홈타이 공식 안내. 서울, 인천, 경기, 대전, 청주 등 전국 주요 지역 검증된 제휴점 정보 및 25분 내 신속 방문 케어를 안내합니다."
@@ -180,10 +382,8 @@ def make_page_html(location_str, nav_html, rel_path_to_root, page_url_path="", i
     
     if "<title>" in page_html:
         page_html = re.sub(r'<title>.*?</title>', f'<title>{seo_title}</title>', page_html, flags=re.DOTALL)
-    
     if 'name="description"' in page_html:
         page_html = re.sub(r'<meta name="description" content=".*?">', f'<meta name="description" content="{seo_desc}">', page_html, flags=re.DOTALL)
-
     if 'name="keywords"' in page_html:
         page_html = re.sub(r'<meta name="keywords" content=".*?">', f'<meta name="keywords" content="{seo_keywords}">', page_html, flags=re.DOTALL)
 
@@ -195,110 +395,19 @@ def make_page_html(location_str, nav_html, rel_path_to_root, page_url_path="", i
 
     page_html = page_html.replace("{{ location_name }}", location_str)
     page_html = page_html.replace('href="/"', f'href="{rel_path_to_root}index.html"')
-    
-    two_shops_html = f'''
-    <section class="max-w-4xl mx-auto px-4 py-8">
-        <div class="text-center mb-8">
-            <span class="inline-block bg-gold-500/10 border border-gold-500/30 text-gold-400 text-xs px-3 py-1 rounded-full font-bold mb-2">VERIFIED PREMIUM SHOPS</span>
-            <h3 class="text-2xl font-black text-white">✨ {location_str} 엄선 추천 제휴점</h3>
-            <p class="text-gray-400 text-xs mt-1">바로홈타이가 직접 검증한 프리미엄 케어 샵입니다.</p>
-        </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- 제휴점 1: S슬림홈타이 -->
-            <div class="bg-gradient-to-b from-[#1c1c24] to-[#121218] border border-gold-500/40 rounded-2xl p-6 shadow-2xl relative overflow-hidden transition-all hover:border-gold-400">
-                <div class="absolute top-0 right-0 bg-gold-500 text-black text-[11px] font-black px-3 py-1 rounded-bl-xl shadow-md">
-                    ★ BEST PREFERRED
-                </div>
-                
-                <div class="flex items-center gap-2 mb-3">
-                    <span class="text-yellow-400 text-sm">★★★★★</span>
-                    <span class="text-gold-400 text-xs font-bold">5.0</span>
-                    <span class="text-gray-500 text-xs">(리뷰 최상위)</span>
-                </div>
-
-                <h4 class="text-2xl font-black text-white tracking-tight mb-1">S슬림홈타이</h4>
-                <p class="text-gold-400 text-xs font-semibold mb-4">슬림 케어 & 프리미엄 맞춤 힐링 전문</p>
-
-                <div class="bg-[#14141a] p-3.5 rounded-xl border border-white/5 mb-5 text-xs text-gray-300 space-y-1.5">
-                    <div class="flex items-center justify-between">
-                        <span class="text-gray-400">⏰ 영업시간</span>
-                        <span class="font-bold text-white">24시간 연중무휴</span>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span class="text-gray-400">🚗 방문지역</span>
-                        <span class="font-bold text-white">{location_str} 전지역 신속 이동</span>
-                    </div>
-                </div>
-
-                <div class="flex flex-wrap gap-1.5 mb-6">
-                    <span class="bg-white/5 border border-white/10 text-gray-300 text-[11px] px-2.5 py-1 rounded-lg">#친절예약</span>
-                    <span class="bg-white/5 border border-white/10 text-gray-300 text-[11px] px-2.5 py-1 rounded-lg">#맞춤케어</span>
-                    <span class="bg-white/5 border border-white/10 text-gray-300 text-[11px] px-2.5 py-1 rounded-lg">#힐링전문</span>
-                </div>
-
-                <a href="tel:0507-1280-3342" class="flex items-center justify-center gap-2 w-full bg-gold-500 hover:bg-gold-600 text-black font-black py-3.5 rounded-xl text-base transition-all shadow-lg shadow-gold-500/20 active:scale-95">
-                    <span>📞 전화 예약하기</span>
-                    <span class="text-xs font-extrabold opacity-80">(0507-1280-3342)</span>
-                </a>
-            </div>
-
-            <!-- 제휴점 2: 사쿠라 홈타이 -->
-            <div class="bg-gradient-to-b from-[#1c1c24] to-[#121218] border border-gold-500/40 rounded-2xl p-6 shadow-2xl relative overflow-hidden transition-all hover:border-gold-400">
-                <div class="absolute top-0 right-0 bg-gold-500 text-black text-[11px] font-black px-3 py-1 rounded-bl-xl shadow-md">
-                    ★ POPULAR CHOICE
-                </div>
-
-                <div class="flex items-center gap-2 mb-3">
-                    <span class="text-yellow-400 text-sm">★★★★★</span>
-                    <span class="text-gold-400 text-xs font-bold">4.9</span>
-                    <span class="text-gray-500 text-xs">(만족도 우수)</span>
-                </div>
-
-                <h4 class="text-2xl font-black text-white tracking-tight mb-1">사쿠라 홈타이</h4>
-                <p class="text-gold-400 text-xs font-semibold mb-4">신속 방문 & 편안한 아로마 케어</p>
-
-                <div class="bg-[#14141a] p-3.5 rounded-xl border border-white/5 mb-5 text-xs text-gray-300 space-y-1.5">
-                    <div class="flex items-center justify-between">
-                        <span class="text-gray-400">⏰ 영업시간</span>
-                        <span class="font-bold text-white">24시간 연중무휴</span>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span class="text-gray-400">🚗 방문지역</span>
-                        <span class="font-bold text-white">{location_str} 전지역 빠른 방문</span>
-                    </div>
-                </div>
-
-                <div class="flex flex-wrap gap-1.5 mb-6">
-                    <span class="bg-white/5 border border-white/10 text-gray-300 text-[11px] px-2.5 py-1 rounded-lg">#신속방문</span>
-                    <span class="bg-white/5 border border-white/10 text-gray-300 text-[11px] px-2.5 py-1 rounded-lg">#전문테라피</span>
-                    <span class="bg-white/5 border border-white/10 text-gray-300 text-[11px] px-2.5 py-1 rounded-lg">#재방문율높음</span>
-                </div>
-
-                <a href="tel:0507-1280-3343" class="flex items-center justify-center gap-2 w-full bg-gold-500 hover:bg-gold-600 text-black font-black py-3.5 rounded-xl text-base transition-all shadow-lg shadow-gold-500/20 active:scale-95">
-                    <span>📞 전화 예약하기</span>
-                    <span class="text-xs font-extrabold opacity-80">(0507-1280-3343)</span>
-                </a>
-            </div>
-        </div>
-    </section>
-    '''
-
+    # 제휴샵 목록 생성
     if is_two_shop_region:
-        if "<main" in page_html and "</main>" in page_html:
-            main_start = page_html.find("<main")
-            main_end = page_html.find("</main>") + 7
-            main_open_tag = page_html[main_start:page_html.find(">", main_start) + 1]
-            
-            new_main_content = f"{main_open_tag}\n{two_shops_html}\n{nav_html if nav_html else ''}\n</main>"
-            page_html = page_html[:main_start] + new_main_content + page_html[main_end:]
+        shops_html = get_two_shops(location_str)
     else:
-        if nav_html and "</main>" in page_html:
-            page_html = page_html.replace("</main>", f"{nav_html}</main>")
-        
+        shops_html = get_default_five_shops(location_str)
+    
+    page_html = page_html.replace("{{ shop_list_section }}", shops_html)
+    page_html = page_html.replace("{{ navigation_section }}", nav_html if nav_html else "")
+
     return page_html
 
-# 5. 최상위 메인 페이지 생성 (is_main=True 적용하여 스팸 키워드 배제)
+# 5. 최상위 메인 페이지 생성
 root_main_html = make_page_html("전국 주요 지역", main_nav_html, "", page_url_path="/", is_main=True)
 with open("index.html", "w", encoding="utf-8") as out:
     out.write(root_main_html)
@@ -323,14 +432,14 @@ for district_name, city in district_to_city.items():
     
     is_special_two_shops = (city in ["daejeon", "cheongju"])
     
-    # (1) 구 메인 페이지 (is_main=False)
+    # (1) 구 메인 페이지
     dist_location = f"{city_name} {district_name}"
     towns_in_dist = district_to_towns.get(district_name, [])
     
-    towns_nav = f'<div class="max-w-4xl mx-auto px-4 py-8"><h2 class="text-xl font-black text-white mb-4 text-center">📍 {district_name} 세부 지역별 안내</h2><div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5">'
+    towns_nav = f'<section class="mt-12 bg-[#141418] border border-gold-500/20 rounded-3xl p-6 shadow-xl"><h2 class="text-xl font-black text-white mb-4 text-center">📍 {district_name} 세부 지역별 안내</h2><div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5">'
     for t in towns_in_dist:
         towns_nav += f'<a href="{t}/index.html" class="bg-[#18181c] border border-gold-500/30 hover:border-gold-400 text-gray-200 hover:text-gold-400 py-2.5 px-2 rounded-xl text-xs font-bold text-center transition-all shadow-sm">{t}</a>'
-    towns_nav += '</div></div>'
+    towns_nav += '</div></section>'
     
     dist_path = f"/output/{city}/{district_name}/index.html"
     dist_html = make_page_html(dist_location + " 전지역", towns_nav, "../../../", page_url_path=dist_path, is_main=False, is_two_shop_region=is_special_two_shops)
@@ -344,7 +453,7 @@ for district_name, city in district_to_city.items():
     encoded_dist_url = f"{SITE_URL}/output/{city}/{quote(district_name)}/index.html"
     all_page_urls.append(encoded_dist_url)
     
-    # (2) 동 상세 페이지 (is_main=False)
+    # (2) 동 상세 페이지
     for town_name in towns_in_dist:
         town_location = f"{city_name} {district_name} {town_name}"
         town_path = f"/output/{city}/{district_name}/{town_name}/index.html"
@@ -381,4 +490,4 @@ sitemap_xml += '</urlset>'
 with open("sitemap.xml", "w", encoding="utf-8") as f:
     f.write(sitemap_xml)
 
-print(f"✨ 바로홈타이 SEO 자동 빌드 완벽 성공! (구/시: {created_districts}개, 동: {total_towns}개)")
+print(f"✨ 레이아웃 오류 완전 해결 및 빌드 완료! (구/시: {created_districts}개, 대표 동: {total_towns}개)")
