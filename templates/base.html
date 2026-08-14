@@ -17,96 +17,422 @@
     <meta property="og:type" content="website" />
     <meta property="og:url" content="{{ canonical_url }}" />
 
-<!-- 폰트 -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+    <!-- Pretendard 폰트 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
 
-<!-- 🌟 에러를 유발하는 script 대신 안정적인 Tailwind CSS 링크 사용 -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" />
+    <!-- 🌟 절대 깨지지 않는 자체 순수 CSS (외부 스크립트 에러 100% 차단) -->
+    <style>
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+        background-color: #0b0b0e;
+        color: #f3f4f6;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      a { text-decoration: none; color: inherit; }
+      
+      .container {
+        width: 100%;
+        max-width: 896px;
+        margin: 0 auto;
+        padding: 0 16px;
+      }
+      
+      /* 상단 긴급 배너 */
+      .urgent-banner {
+        background: linear-gradient(to right, #d97706, #eab308, #d97706);
+        color: #000;
+        font-size: 13px;
+        font-weight: 900;
+        text-align: center;
+        padding: 10px 16px;
+      }
 
-<style>
-  * { box-sizing: border-box; }
-  body {
-    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif !important;
-    background-color: #0b0b0e !important;
-    color: #f3f4f6 !important;
-    margin: 0;
-    padding: 0;
-  }
-  /* 골드 테마 및 필수 유틸리티 스타일 직접 정의 */
-  .text-gold-300 { color: #fde047; }
-  .text-gold-400 { color: #facc15; }
-  .text-gold-500 { color: #eab308; }
-  .bg-gold-400 { background-color: #facc15; }
-  .bg-gold-500 { background-color: #eab308; }
-  .bg-gold-600 { background-color: #ca8a04; }
-  .border-gold-400 { border-color: #facc15; }
-  .border-gold-500 { border-color: #eab308; }
-  .border-gold-500\/20 { border-color: rgba(234, 179, 8, 0.2); }
-  .border-gold-500\/30 { border-color: rgba(234, 179, 8, 0.3); }
-  .border-gold-500\/40 { border-color: rgba(234, 179, 8, 0.4); }
-  .bg-gold-500\/10 { background-color: rgba(234, 179, 8, 0.1); }
-  .bg-gold-500\/20 { background-color: rgba(234, 179, 8, 0.2); }
-  .gold-gradient-text {
-    background: linear-gradient(to right, #fde047, #facc15, #f59e0b);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-</style>
+      /* 헤더 */
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background-color: rgba(11, 11, 14, 0.95);
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid rgba(234, 179, 8, 0.2);
+        padding: 12px 16px;
+      }
+      .header-content {
+        max-width: 896px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .logo-box {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .logo-img-wrapper {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #ca8a04, #facc15);
+        padding: 1px;
+        overflow: hidden;
+      }
+      .logo-img-inner {
+        width: 100%;
+        height: 100%;
+        background-color: #121216;
+        border-radius: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+      .logo-img-inner img { width: 100%; height: 100%; object-fit: cover; }
+      .brand-title {
+        font-size: 18px;
+        font-weight: 900;
+        background: linear-gradient(to right, #fde047, #facc15, #f59e0b);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .brand-sub {
+        font-size: 10px;
+        font-weight: 700;
+        color: #facc15;
+      }
+      .btn-main-link {
+        font-size: 12px;
+        color: #d1d5db;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        padding: 6px 14px;
+        border-radius: 9999px;
+        font-weight: 600;
+      }
+
+      /* 메인 콘텐츠 영역 */
+      main {
+        flex: 1;
+        width: 100%;
+        max-width: 896px;
+        margin: 0 auto;
+        padding: 32px 16px;
+      }
+
+      /* 배너 섹션 */
+      .hero-section { text-align: center; margin-bottom: 36px; }
+      .hero-card {
+        border-radius: 24px;
+        overflow: hidden;
+        border: 2px solid rgba(234, 179, 8, 0.4);
+        position: relative;
+        margin-bottom: 24px;
+      }
+      .hero-img {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+        display: block;
+        opacity: 0.9;
+      }
+      .hero-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(11, 11, 14, 0.95), rgba(0, 0, 0, 0.2), transparent);
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: center;
+        padding: 20px;
+      }
+      .badge-discount {
+        background-color: #eab308;
+        color: #000;
+        font-size: 12px;
+        font-weight: 900;
+        padding: 4px 14px;
+        border-radius: 9999px;
+        margin-bottom: 8px;
+      }
+      .hero-text {
+        color: #fff;
+        font-size: 16px;
+        font-weight: 700;
+      }
+      .hero-title {
+        font-size: 26px;
+        font-weight: 900;
+        line-height: 1.3;
+        margin-bottom: 10px;
+      }
+      .hero-desc {
+        font-size: 13px;
+        color: #d1d5db;
+        max-width: 550px;
+        margin: 0 auto;
+        line-height: 1.6;
+      }
+
+      /* 🌟 제휴점 카드 리스트 */
+      .shop-list {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        width: 100%;
+      }
+      .shop-card {
+        background-color: #18181c;
+        border: 1px solid rgba(234, 179, 8, 0.3);
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      }
+      .shop-card-img-wrap {
+        position: relative;
+        height: 190px;
+        overflow: hidden;
+      }
+      .shop-card-img-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .shop-card-gradient {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, #18181c, transparent 60%);
+      }
+      .shop-card-badges {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        display: flex;
+        gap: 6px;
+        z-index: 10;
+      }
+      .badge-fire {
+        background-color: #facc15;
+        color: #000;
+        font-size: 11px;
+        font-weight: 900;
+        padding: 3px 10px;
+        border-radius: 9999px;
+      }
+      .badge-safe {
+        background-color: rgba(0, 0, 0, 0.7);
+        color: #fde047;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 9999px;
+        border: 1px solid rgba(234, 179, 8, 0.4);
+      }
+      .shop-card-header {
+        position: absolute;
+        bottom: 12px;
+        left: 16px;
+        right: 16px;
+        z-index: 10;
+      }
+      .shop-card-name { font-size: 22px; font-weight: 900; color: #fff; }
+      .shop-card-loc { font-size: 12px; color: #facc15; font-weight: 700; margin-top: 2px; }
+
+      .shop-card-body { padding: 20px; }
+      .shop-card-desc { font-size: 13px; color: #e5e7eb; margin-bottom: 16px; line-height: 1.5; }
+      .course-box {
+        background-color: rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 16px;
+        padding: 14px;
+        margin-bottom: 18px;
+      }
+      .course-box-title { font-size: 11px; font-weight: 700; color: #facc15; margin-bottom: 8px; }
+      .course-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 6px 0;
+        font-size: 13px;
+      }
+      .course-row:not(:last-child) { border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+      .course-price {
+        font-weight: 900;
+        color: #facc15;
+        background: rgba(234, 179, 8, 0.1);
+        padding: 3px 10px;
+        border-radius: 8px;
+        border: 1px solid rgba(234, 179, 8, 0.3);
+      }
+
+      .btn-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      .btn-call {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(to right, #eab308, #f59e0b);
+        color: #000;
+        font-weight: 900;
+        font-size: 13px;
+        padding: 12px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(234, 179, 8, 0.2);
+      }
+      .btn-sms {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(255, 255, 255, 0.1);
+        color: #fff;
+        font-weight: 700;
+        font-size: 13px;
+        padding: 12px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      /* 🌟 지역별 네비게이션 그리드 */
+      .nav-section {
+        background-color: #141418;
+        border: 1px solid rgba(234, 179, 8, 0.2);
+        border-radius: 24px;
+        padding: 22px 18px;
+        margin-top: 36px;
+      }
+      .nav-title {
+        font-size: 18px;
+        font-weight: 900;
+        color: #fff;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .nav-city-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: #facc15;
+        margin: 14px 0 8px 0;
+      }
+      .nav-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        margin-bottom: 16px;
+      }
+      @media (min-width: 640px) {
+        .nav-grid { grid-template-columns: repeat(4, 1fr); }
+      }
+      @media (min-width: 768px) {
+        .nav-grid { grid-template-columns: repeat(6, 1fr); }
+        .hero-title { font-size: 36px; }
+        .hero-img { height: 260px; }
+      }
+      .nav-btn {
+        background-color: #18181c;
+        border: 1px solid rgba(234, 179, 8, 0.3);
+        color: #e5e7eb;
+        padding: 10px 4px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 700;
+        text-align: center;
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      /* 하단 메인 이동 섹션 */
+      .bottom-home-box {
+        background-color: #18181c;
+        border: 1px solid rgba(234, 179, 8, 0.3);
+        border-radius: 20px;
+        padding: 24px 16px;
+        text-align: center;
+        margin-top: 36px;
+      }
+      .btn-home {
+        display: inline-block;
+        font-size: 13px;
+        font-weight: 700;
+        color: #fde047;
+        background: rgba(234, 179, 8, 0.15);
+        border: 1px solid rgba(234, 179, 8, 0.35);
+        padding: 10px 22px;
+        border-radius: 12px;
+      }
+
+      /* 푸터 */
+      footer {
+        background-color: #070709;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 32px 16px;
+        text-align: center;
+        font-size: 12px;
+        color: #9ca3af;
+        margin-top: auto;
+      }
+      .btn-partner {
+        display: inline-block;
+        background-color: #eab308;
+        color: #000;
+        font-size: 13px;
+        font-weight: 900;
+        padding: 11px 22px;
+        border-radius: 12px;
+        margin-bottom: 14px;
+      }
+    </style>
 </head>
-<body class="bg-[#0b0b0e] text-gray-100 min-h-screen flex flex-col selection:bg-gold-400 selection:text-black">
+<body>
 
-    <!-- 상단 긴급 배너 -->
-    <div class="w-full bg-gradient-to-r from-amber-600 via-gold-500 to-amber-600 text-black text-xs md:text-sm font-black py-2.5 px-4 text-center tracking-tight shadow-md">
+    <!-- 상단 긴급 공지 배너 -->
+    <div class="urgent-banner">
       🔥 [실시간] {{ location_name }} 대기중 관리사 25분 내 초고속 도착! 100% 후불제 안심 케어
     </div>
 
     <!-- 헤더 -->
-    <header class="w-full sticky top-0 z-50 bg-[#0b0b0e]/95 backdrop-blur-md border-b border-gold-500/20 px-4 py-3.5">
-        <div class="max-w-4xl mx-auto flex justify-between items-center">
-            <a href="/" class="flex items-center gap-2.5">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-gold-600 to-gold-400 p-[1px] shadow-lg shadow-gold-500/30 flex items-center justify-center">
-                    <div class="w-full h-full bg-[#121216] rounded-[11px] flex items-center justify-center overflow-hidden">
-                        <img src="/logo.png" alt="바로홈타이 로고" class="w-full h-full object-cover" onerror="this.style.display='none'">
+    <header>
+        <div class="header-content">
+            <a href="/" class="logo-box">
+                <div class="logo-img-wrapper">
+                    <div class="logo-img-inner">
+                        <img src="/logo.png" alt="바로홈타이 로고" onerror="this.style.display='none'">
                     </div>
                 </div>
                 <div>
-                    <span class="text-lg font-black gold-gradient-text tracking-tight block">
-                        바로홈타이
-                    </span>
-                    <span class="block text-[10px] text-gold-400 font-bold">📍 {{ location_name }} 안내관</span>
+                    <span class="brand-title">바로홈타이</span>
+                    <span class="brand-sub">📍 {{ location_name }} 안내관</span>
                 </div>
             </a>
-            <a href="/" class="text-xs text-gray-300 hover:text-gold-400 transition-colors bg-white/10 px-3.5 py-1.5 rounded-full border border-white/15 font-semibold">
-                메인으로 &gt;
-            </a>
+            <a href="/" class="btn-main-link">메인으로 &gt;</a>
         </div>
     </header>
 
-    <!-- 메인 컨테이너 -->
-    <main class="w-full max-w-4xl mx-auto px-4 py-8 flex-1">
+    <!-- 메인 콘텐츠 -->
+    <main>
         <!-- 상단 배너 섹션 -->
-        <section class="w-full text-center mb-10">
-            <div class="w-full mb-6 overflow-hidden rounded-3xl border-2 border-gold-500/40 shadow-2xl relative">
-                <div class="absolute inset-0 bg-gradient-to-t from-[#0b0b0e] via-black/40 to-transparent z-10"></div>
-                <img src="/banner.jpg" alt="바로홈타이 프리미엄 배너" class="w-full h-48 md:h-64 object-cover opacity-90 block">
-                <div class="absolute inset-0 z-20 flex flex-col justify-end p-5 md:p-8 text-center">
-                    <span class="inline-block mx-auto bg-gold-500 text-black text-xs font-black px-4 py-1.5 rounded-full mb-2 shadow-lg">
-                        ⚡ 지금 예약시 특별 힐링 혜택 적용!
-                    </span>
-                    <p class="text-white text-base md:text-xl font-bold tracking-wide">
-                        ✨ {{ location_name }} 25분 내 신속 방문 케어
-                    </p>
+        <section class="hero-section">
+            <div class="hero-card">
+                <img src="/banner.jpg" alt="바로홈타이 프리미엄 배너" class="hero-img">
+                <div class="hero-overlay">
+                    <span class="badge-discount">⚡ 지금 예약시 특별 힐링 혜택 적용!</span>
+                    <p class="hero-text">✨ {{ location_name }} 25분 내 신속 방문 케어</p>
                 </div>
             </div>
 
-            <h1 class="text-2xl md:text-4xl font-black text-white mb-2 leading-tight">
-                <span class="gold-gradient-text">
-                    {{ location_name }}
-                </span><br />
+            <h1 class="hero-title">
+                <span class="brand-title">{{ location_name }}</span><br />
                 24시 프리미엄 홈타이·스웨디시
             </h1>
-            <p class="text-gray-300 text-xs md:text-sm max-w-xl mx-auto leading-relaxed">
-                {{ location_name }} 오피스텔, 자택 어디든 24시간 연중무휴 <span class="text-gold-400 font-bold underline decoration-gold-500/50">100% 후불제 안심 케어</span>로 모십니다.
+            <p class="hero-desc">
+                {{ location_name }} 오피스텔, 자택 어디든 24시간 연중무휴 <strong style="color:#facc15; text-decoration: underline;">100% 후불제 안심 케어</strong>로 모십니다.
             </p>
         </section>
 
@@ -117,24 +443,18 @@
         {{ navigation_section }}
 
         <!-- 하단 홈 이동 버튼 -->
-        <section class="w-full bg-[#18181c] py-6 border border-gold-500/30 mt-12 rounded-2xl text-center shadow-xl">
-            <p class="text-xs text-gray-400 mb-2 font-semibold">다른 지역의 제휴점도 확인해보세요</p>
-            <a href="/" class="text-xs px-5 py-2.5 bg-gold-500/20 text-gold-300 rounded-xl border border-gold-500/40 font-bold inline-block hover:bg-gold-500 hover:text-black transition-all">
-                &lt; 전국 메인으로 돌아가기
-            </a>
+        <section class="bottom-home-box">
+            <p style="font-size:12px; color:#9ca3af; margin-bottom:8px;">다른 지역의 제휴점도 확인해보세요</p>
+            <a href="/" class="btn-home">&lt; 전국 메인으로 돌아가기</a>
         </section>
     </main>
 
     <!-- 푸터 -->
-    <footer class="w-full bg-[#070709] border-t border-white/10 py-8 text-center text-gray-400 text-xs mt-auto">
-        <div class="max-w-4xl mx-auto px-4">
-            <div class="mb-4">
-                <a href="tel:0507-1280-3344" class="inline-flex items-center justify-center bg-gold-500 hover:bg-gold-600 text-black font-black text-sm px-6 py-3 rounded-xl shadow-lg transition-all">
-                    📞 제휴문의 0507-1280-3344
-                </a>
-            </div>
-            <p class="font-bold text-gray-400 mb-1">바로홈타이 ({{ location_name }} 전용관)</p>
-            <p class="text-gray-600 text-[11px]">COPYRIGHT &copy; 바로홈타이 ALL RIGHTS RESERVED.</p>
+    <footer>
+        <div class="container">
+            <a href="tel:0507-1280-3344" class="btn-partner">📞 제휴문의 0507-1280-3344</a>
+            <p style="font-weight:700; color:#9ca3af; margin-bottom:4px;">바로홈타이 ({{ location_name }} 전용관)</p>
+            <p style="font-size:11px; color:#6b7280;">COPYRIGHT &copy; 바로홈타이 ALL RIGHTS RESERVED.</p>
         </div>
     </footer>
 </body>
