@@ -13,27 +13,35 @@
 
     <!-- SEO 최적화: 타이틀과 메타 디스크립션 -->
     <title>대전광역시 대전 동구 자양동 바로홈타이 | 24시 신속 방문·후불제 안심 추천</title>
-    <meta name="description" content="[바로홈타이] 대전광역시 대전 동구 자양동 24시 연중무휴! 자택 및 오피스텔 25분 내 초고속 도착. 검증된 프라이빗 스웨디시 & 아로마 후불제 안심 케어."></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              gold: {
-                300: '#fde047',
-                400: '#facc15',
-                500: '#eab308',
-                600: '#ca8a04',
-              }
-            }
-          }
-        }
-      }
-    </script>
+    <meta name="description" content="[바로홈타이] 대전광역시 대전 동구 자양동 24시 연중무휴! 자택 및 오피스텔 25분 내 초고속 도착. 검증된 프라이빗 스웨디시 & 아로마 후불제 안심 케어."> 대신 아래 순수 CSS 링크로 교체 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" />
     <style>
       body {
         font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+        background-color: #0b0b0e;
+        color: #f3f4f6;
       }
+      /* 골드 컬러 클래스 고정 (스타일 깨짐 100% 방지) */
+      .text-gold-300 { color: #fde047; }
+      .text-gold-400 { color: #facc15; }
+      .text-gold-500 { color: #eab308; }
+      .bg-gold-400 { background-color: #facc15; }
+      .bg-gold-500 { background-color: #eab308; }
+      .bg-gold-600 { background-color: #ca8a04; }
+      .border-gold-400 { border-color: #facc15; }
+      .border-gold-500 { border-color: #eab308; }
+      .border-gold-500\/20 { border-color: rgba(234, 179, 8, 0.2); }
+      .border-gold-500\/30 { border-color: rgba(234, 179, 8, 0.3); }
+      .border-gold-500\/40 { border-color: rgba(234, 179, 8, 0.4); }
+      .bg-gold-500\/10 { background-color: rgba(234, 179, 8, 0.1); }
+      .bg-gold-500\/20 { background-color: rgba(234, 179, 8, 0.2); }
+      .from-gold-300 { --tw-gradient-from: #fde047; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(253, 224, 71, 0)); }
+      .from-gold-400 { --tw-gradient-from: #facc15; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(250, 204, 21, 0)); }
+      .from-gold-500 { --tw-gradient-from: #eab308; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(234, 179, 8, 0)); }
+      .from-gold-600 { --tw-gradient-from: #ca8a04; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(202, 138, 4, 0)); }
+      .via-gold-400 { --tw-gradient-stops: var(--tw-gradient-from), #facc15, var(--tw-gradient-to, rgba(250, 204, 21, 0)); }
+      .via-gold-500 { --tw-gradient-stops: var(--tw-gradient-from), #eab308, var(--tw-gradient-to, rgba(234, 179, 8, 0)); }
+      .to-gold-400 { --tw-gradient-to: #facc15; }
     </style>
 </head>
 <body class="bg-[#0b0b0e] text-gray-100 min-h-screen flex flex-col selection:bg-gold-400 selection:text-black">
