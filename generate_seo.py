@@ -1,9 +1,10 @@
 import os
 import csv
 import re
+from urllib.parse import quote
 
-# 0. 도메인 기본 주소 설정 (HTTPS 필수)
-SITE_URL = "https://moduhomethai.shop"
+# 0. 도메인 기본 주소 설정 (한글 도메인 퓨니코드 적용)
+SITE_URL = "https://xn--2z1b98p8yb63d.shop"  # 바로홈타이.shop
 
 # 1. 템플릿 파일 읽기
 with open("templates/base.html", "r", encoding="utf-8") as f:
@@ -13,41 +14,52 @@ output_dir = "output"
 os.makedirs(output_dir, exist_ok=True)
 
 # 생성된 모든 페이지의 URL을 담을 리스트 (사이트맵 생성용)
-all_page_urls = [f"{SITE_URL}/index.html"]
+all_page_urls = [f"{SITE_URL}/"]
 
-# 2. 데이터 구조화 (서울, 인천, 경기, 대전, 청주 전지역)
+# 2. 동 이름 통일 함수 (숫자 제거)
+def normalize_dong_name(name):
+    name = name.strip()
+    name = re.sub(r'\d+동$', '동', name)
+    name = re.sub(r'\d+가$', '', name)
+    name = re.sub(r'\d+', '', name)
+    return name.strip()
+
 district_to_towns = {}
 district_to_city = {}
 
-# (1) 기존 CSV 파일 읽기
+def add_town(district_name, city, town_name):
+    norm_town = normalize_dong_name(town_name)
+    if not norm_town:
+        return
+    district_to_city[district_name] = city
+    if district_name not in district_to_towns:
+        district_to_towns[district_name] = []
+    if norm_town not in district_to_towns[district_name]:
+        district_to_towns[district_name].append(norm_town)
+
+# CSV 및 지역 데이터 매핑
 csv_path = "data/regions_with_shop.csv"
 if os.path.exists(csv_path):
     with open(csv_path, "r", encoding="utf-8") as file:
         reader = csv.DictReader(file)
         for row in reader:
             city = row.get("city_code", "seoul")
-            district_name = row.get("district_name", "")
-            town_name = row.get("town_name", "")
-            if district_name and town_name:
-                district_to_city[district_name] = city
-                if district_name not in district_to_towns:
-                    district_to_towns[district_name] = []
-                if town_name not in district_to_towns[district_name]:
-                    district_to_towns[district_name].append(town_name)
+            dist = row.get("district_name", "").strip()
+            town = row.get("town_name", "").strip()
+            if dist and town:
+                add_town(dist, city, town)
 
-# (2) 인천광역시 주요 구/동 데이터
 incheon_data = {
-    "남동구": ["구월1동", "구월2동", "구월3동", "구월4동", "간석1동", "간석2동", "간석3동", "만수1동", "만수2동", "서창동", "논현동"],
-    "연수구": ["옥련동", "선학동", "연수동", "청학동", "동춘동", "송도1동", "송도2동", "송도3동", "송도4동", "송도5동"],
-    "부평구": ["부평1동", "부평2동", "부평3동", "산곡동", "청천동", "갈산동", "삼산동", "부개동", "십정동"],
+    "남동구": ["구월동", "간석동", "만수동", "서창동", "논현동"],
+    "연수구": ["옥련동", "선학동", "연수동", "청학동", "동춘동", "송도동"],
+    "부평구": ["부평동", "산곡동", "청천동", "갈산동", "삼산동", "부개동", "십정동"],
     "서구": ["검암동", "경서동", "연희동", "가정동", "신현동", "석남동", "가좌동", "당하동", "마전동", "아라동"],
     "계양구": ["효성동", "계산동", "작전동", "작전서운동", "계양동"]
 }
 for dist, towns in incheon_data.items():
-    district_to_city[dist] = "incheon"
-    district_to_towns[dist] = towns
+    for t in towns:
+        add_town(dist, "incheon", t)
 
-# (3) 🌟 경기도 전지역 (주요 시/구 대폭 추가)
 gyeonggi_data = {
     "수원시 장안구": ["영화동", "조원동", "파장동", "정자동", "이목동", "율전동"],
     "수원시 권선구": ["세류동", "평동", "서둔동", "구운동", "금곡동", "호매실동", "권선동"],
@@ -59,7 +71,7 @@ gyeonggi_data = {
     "고양시 덕양구": ["주교동", "원당동", "신원동", "흥도동", "성사동", "신도동", "창릉동", "고양동", "관산동", "능곡동", "화정동", "행주동", "행신동"],
     "고양시 일산동구": ["식사동", "중산동", "정발산동", "백석동", "마두동", "장항동", "풍동"],
     "고양시 일산서구": ["일산동", "탄현동", "주엽동", "대화동", "덕이동", "가좌동"],
-    "용인시 처인구": ["포곡읍", "모현읍", "남사읍", " 이동읍", "원삼면", "백암면", "양지면", "중앙동", "역북동", "삼가동", "유방동"],
+    "용인시 처인구": ["포곡읍", "모현읍", "남사읍", "이동읍", "원삼면", "백암면", "양지면", "중앙동", "역북동", "삼가동", "유방동"],
     "용인시 기흥구": ["신갈동", "영덕동", "구갈동", "상갈동", "보라동", "기흥동", "서농동", "구성동", "마북동", "동백동", "상하동", "보정동"],
     "용인시 수지구": ["풍덕천동", "상현동", "성복동", "죽전동", "동천동", "신봉동"],
     "부천시": ["원미동", "소사동", "역곡동", "중동", "상동", "심곡동", "신흥동", "대장동"],
@@ -82,35 +94,32 @@ gyeonggi_data = {
     "안성시": ["공도읍", "보개면", "금광면", "서운면", "미양면", "대덕면", "양성면", "원곡면", "고삼면", "일죽면", "죽산면", "삼죽면", "안성동"],
     "의왕시": ["고천동", "부곡동", "오전동", "내손동", "청계동"],
     "포천시": ["소흘읍", "군내면", "내촌면", "가산면", "신북면", "창수면", "영중면", "일동면", "이동면", "영북면", "관인면", "화현면", "포천동", "선단동"],
-    "여주시": ["가남읍", "점동면", "흥천면", "금사면", "산북면", "대신면", "북내면", "강천면", "산북면", "여흥동", "중앙동", "오학동"]
+    "여주시": ["가남읍", "점동면", "흥천면", "금사면", "산북면", "대신면", "북내면", "강천면", "여흥동", "중앙동", "오학동"]
 }
 for dist, towns in gyeonggi_data.items():
-    district_to_city[dist] = "gyeonggi"
-    district_to_towns[dist] = towns
+    for t in towns:
+        add_town(dist, "gyeonggi", t)
 
-# (4) 🌟 대전광역시 전지역 (동구, 중구, 서구, 유성구, 대덕구)
 daejeon_data = {
-    "대전 동구": ["중앙동", "신인동", "효동", "판암1동", "판암2동", "용운동", "대동", "자양동", "가양1동", "가양2동", "용전동", "성남동", "낭월동"],
-    "대전 중구": ["은행선화동", "응동", "중촌동", "태평1동", "태평2동", "유천1동", "유천2동", "문화1동", "문화2동", "산성동"],
-    "대전 서구": ["복수동", "도마1동", "도마2동", "변동", "용문동", "탄방동", "둔산1동", "둔산2동", "둔산3동", "갈마1동", "갈마2동", "월평1동", "월평2동", "월평3동", "관저1동", "관저2동", "기성동"],
-    "대전 유성구": ["진잠동", "교동", "원신흥동", "태평동", "자운동", "반석동", "노은1동", "노은2동", "노은3동", "신성동", "전민동", "구즉동", "관평동"],
+    "대전 동구": ["중앙동", "신인동", "효동", "판암동", "용운동", "대동", "자양동", "가양동", "용전동", "성남동", "낭월동"],
+    "대전 중구": ["은행선화동", "응동", "중촌동", "태평동", "유천동", "문화동", "산성동"],
+    "대전 서구": ["복수동", "도마동", "변동", "용문동", "탄방동", "둔산동", "갈마동", "월평동", "관저동", "기성동"],
+    "대전 유성구": ["진잠동", "교동", "원신흥동", "태평동", "자운동", "반석동", "노은동", "신성동", "전민동", "구즉동", "관평동"],
     "대전 대덕구": ["오정동", "대화동", "회덕동", "비래동", "송촌동", "중리동", "법동", "신탄진동", "석봉동", "덕암동", "목상동"]
 }
 for dist, towns in daejeon_data.items():
-    district_to_city[dist] = "daejeon"
-    district_to_towns[dist] = towns
+    for t in towns:
+        add_town(dist, "daejeon", t)
 
-# (5) 🌟 청주시 전지역 (상당구, 흥덕구, 청원구, 서원구)
 cheongju_data = {
-    "청주시 상당구": ["성안동", "탑대성동", "영운동", "금천동", "용담명암산성동", "용암1동", "용암2동", "남일면", "문의면"],
-    "청주시 흥덕구": ["운천신봉동", "복대1동", "복대2동", "가경동", "봉명1동", "봉명2송정동", "강서1동", "강서2동", "오송읍", "강내면"],
-    "청주시 청원구": ["내덕1동", "내덕2동", "율량사천동", "오근장동", "오창읍", "내수읍"],
-    "청주시 서원구": ["사직1동", "사직2동", "사창동", "모충동", "수곡1동", "수곡2동", "산남동", "분평동", "성화개신죽림동"]
+    "청주시 상당구": ["성안동", "탑대성동", "영운동", "금천동", "용담명암산성동", "용암동", "남일면", "문의면"],
+    "청주시 흥덕구": ["운천신봉동", "복대동", "가경동", "봉명동", "봉명송정동", "강서동", "오송읍", "강내면"],
+    "청주시 청원구": ["내덕동", "율량사천동", "오근장동", "오창읍", "내수읍"],
+    "청주시 서원구": ["사직동", "사창동", "모충동", "수곡동", "산남동", "분평동", "성화개신죽림동"]
 }
 for dist, towns in cheongju_data.items():
-    district_to_city[dist] = "cheongju"
-    district_to_towns[dist] = towns
-
+    for t in towns:
+        add_town(dist, "cheongju", t)
 
 # 3. 최상위 메인 화면 네비게이션 생성
 main_nav_html = '<div class="max-w-5xl mx-auto px-4 py-8"><h2 class="text-xl font-black text-white mb-6 text-center">📍 전국 지역별 전문관</h2>'
@@ -123,52 +132,66 @@ cheongju_dists = [d for d, c in district_to_city.items() if c == "cheongju"]
 if seoul_dists:
     main_nav_html += '<h3 class="text-sm font-bold text-gold-400 mb-2">🏙️ 서울특별시</h3><div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5 mb-6">'
     for dist in seoul_dists:
-        main_nav_html += f'<a href="output/seoul/{dist}/index.html" class="bg-[#18181c] border border-gold-500/30 hover:border-gold-400 text-gray-200 hover:text-gold-400 py-2.5 px-2 rounded-xl text-xs font-bold text-center transition-all shadow-sm">{dist}</a>'
+        main_nav_html += f'<a href="/output/seoul/{dist}/index.html" class="bg-[#18181c] border border-gold-500/30 hover:border-gold-400 text-gray-200 hover:text-gold-400 py-2.5 px-2 rounded-xl text-xs font-bold text-center transition-all shadow-sm">{dist}</a>'
     main_nav_html += '</div>'
 
 if incheon_dists:
     main_nav_html += '<h3 class="text-sm font-bold text-gold-400 mb-2">⚓ 인천광역시</h3><div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5 mb-6">'
     for dist in incheon_dists:
-        main_nav_html += f'<a href="output/incheon/{dist}/index.html" class="bg-[#18181c] border border-gold-500/30 hover:border-gold-400 text-gray-200 hover:text-gold-400 py-2.5 px-2 rounded-xl text-xs font-bold text-center transition-all shadow-sm">{dist}</a>'
+        main_nav_html += f'<a href="/output/incheon/{dist}/index.html" class="bg-[#18181c] border border-gold-500/30 hover:border-gold-400 text-gray-200 hover:text-gold-400 py-2.5 px-2 rounded-xl text-xs font-bold text-center transition-all shadow-sm">{dist}</a>'
     main_nav_html += '</div>'
 
 if gyeonggi_dists:
     main_nav_html += '<h3 class="text-sm font-bold text-gold-400 mb-2">🏡 경기도</h3><div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5 mb-6">'
     for dist in gyeonggi_dists:
-        main_nav_html += f'<a href="output/gyeonggi/{dist}/index.html" class="bg-[#18181c] border border-gold-500/30 hover:border-gold-400 text-gray-200 hover:text-gold-400 py-2.5 px-2 rounded-xl text-xs font-bold text-center transition-all shadow-sm">{dist}</a>'
+        main_nav_html += f'<a href="/output/gyeonggi/{dist}/index.html" class="bg-[#18181c] border border-gold-500/30 hover:border-gold-400 text-gray-200 hover:text-gold-400 py-2.5 px-2 rounded-xl text-xs font-bold text-center transition-all shadow-sm">{dist}</a>'
     main_nav_html += '</div>'
 
 if daejeon_dists:
     main_nav_html += '<h3 class="text-sm font-bold text-gold-400 mb-2">🌟 대전광역시 (프리미엄 전용)</h3><div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5 mb-6">'
     for dist in daejeon_dists:
-        main_nav_html += f'<a href="output/daejeon/{dist}/index.html" class="bg-[#18181c] border border-gold-500/30 hover:border-gold-400 text-gray-200 hover:text-gold-400 py-2.5 px-2 rounded-xl text-xs font-bold text-center transition-all shadow-sm">{dist}</a>'
+        main_nav_html += f'<a href="/output/daejeon/{dist}/index.html" class="bg-[#18181c] border border-gold-500/30 hover:border-gold-400 text-gray-200 hover:text-gold-400 py-2.5 px-2 rounded-xl text-xs font-bold text-center transition-all shadow-sm">{dist}</a>'
     main_nav_html += '</div>'
 
 if cheongju_dists:
     main_nav_html += '<h3 class="text-sm font-bold text-gold-400 mb-2">🌿 청주시 (프리미엄 전용)</h3><div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5">'
     for dist in cheongju_dists:
-        main_nav_html += f'<a href="output/cheongju/{dist}/index.html" class="bg-[#18181c] border border-gold-500/30 hover:border-gold-400 text-gray-200 hover:text-gold-400 py-2.5 px-2 rounded-xl text-xs font-bold text-center transition-all shadow-sm">{dist}</a>'
+        main_nav_html += f'<a href="/output/cheongju/{dist}/index.html" class="bg-[#18181c] border border-gold-500/30 hover:border-gold-400 text-gray-200 hover:text-gold-400 py-2.5 px-2 rounded-xl text-xs font-bold text-center transition-all shadow-sm">{dist}</a>'
     main_nav_html += '</div>'
 
 main_nav_html += '</div>'
 
 
-# 4. 페이지 생성 함수 (대전 & 청주 2개 업체 전용 고급 디자인 반영)
-def make_page_html(location_str, nav_html, rel_path_to_root, is_two_shop_region=False):
+# 4. 페이지 생성 함수 (메인 vs 구/동 SEO 분리 적용)
+def make_page_html(location_str, nav_html, rel_path_to_root, page_url_path="", is_main=False, is_two_shop_region=False):
     page_html = template_content
     
-    seo_title = f"{location_str} 출장마사지 | 프리미엄 힐링 가이드"
-    seo_desc = f"{location_str} 지역 맞춤형 서비스 및 검증된 공식 제휴점 정보. 최상급 케어를 제공하는 {location_str} 전문관입니다."
+    # 🌟 메인 페이지 vs 구/동 상세 페이지 SEO 태그 분리
+    if is_main:
+        seo_title = "바로홈타이 | 전국 24시 프리미엄 홈케어 및 힐링 가이드"
+        seo_desc = "바로홈타이 공식 안내. 서울, 인천, 경기, 대전, 청주 등 전국 주요 지역 검증된 제휴점 정보 및 25분 내 신속 방문 케어를 안내합니다."
+        seo_keywords = "바로홈타이, 홈타이, 스웨디시, 아로마케어, 24시 힐링샵"
+    else:
+        seo_title = f"{location_str} 바로홈타이 | 24시 신속 방문·후불제 안심 추천"
+        seo_desc = f"[바로홈타이] {location_str} 24시 연중무휴! 자택 및 오피스텔 25분 내 초고속 도착. 검증된 프라이빗 스웨디시 & 아로마 후불제 안심 케어."
+        seo_keywords = f"{location_str}바로홈타이, {location_str}출장마사지, {location_str}홈타이, {location_str}스웨디시, 바로홈타이"
+        
+    canonical_url = f"{SITE_URL}{page_url_path}"
     
     if "<title>" in page_html:
-        page_html = re.sub(r'<title>.*?</title>', f'<title>{seo_title}</title>', page_html)
-    else:
-        page_html = page_html.replace('</head>', f'<title>{seo_title}</title>\n</head>')
-        
+        page_html = re.sub(r'<title>.*?</title>', f'<title>{seo_title}</title>', page_html, flags=re.DOTALL)
+    
     if 'name="description"' in page_html:
-        page_html = re.sub(r'<meta name="description" content=".*?>', f'<meta name="description" content="{seo_desc}">', page_html)
+        page_html = re.sub(r'<meta name="description" content=".*?">', f'<meta name="description" content="{seo_desc}">', page_html, flags=re.DOTALL)
+
+    if 'name="keywords"' in page_html:
+        page_html = re.sub(r'<meta name="keywords" content=".*?">', f'<meta name="keywords" content="{seo_keywords}">', page_html, flags=re.DOTALL)
+
+    canonical_tag = f'<link rel="canonical" href="{canonical_url}" />'
+    if 'rel="canonical"' in page_html:
+        page_html = re.sub(r'<link rel="canonical" href=".*?"\s*/?>', canonical_tag, page_html)
     else:
-        page_html = page_html.replace('</head>', f'<meta name="description" content="{seo_desc}">\n</head>')
+        page_html = page_html.replace('</head>', f'    {canonical_tag}\n</head>')
 
     page_html = page_html.replace("{{ location_name }}", location_str)
     page_html = page_html.replace('href="/"', f'href="{rel_path_to_root}index.html"')
@@ -178,7 +201,7 @@ def make_page_html(location_str, nav_html, rel_path_to_root, is_two_shop_region=
         <div class="text-center mb-8">
             <span class="inline-block bg-gold-500/10 border border-gold-500/30 text-gold-400 text-xs px-3 py-1 rounded-full font-bold mb-2">VERIFIED PREMIUM SHOPS</span>
             <h3 class="text-2xl font-black text-white">✨ {location_str} 엄선 추천 제휴점</h3>
-            <p class="text-gray-400 text-xs mt-1">모두의홈타이가 직접 검증한 프리미엄 케어 샵입니다.</p>
+            <p class="text-gray-400 text-xs mt-1">바로홈타이가 직접 검증한 프리미엄 케어 샵입니다.</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -275,8 +298,8 @@ def make_page_html(location_str, nav_html, rel_path_to_root, is_two_shop_region=
         
     return page_html
 
-# 5. 최상위 메인 페이지 생성
-root_main_html = make_page_html("전국(서울·인천·경기·대전·청주) 전지역", main_nav_html, "")
+# 5. 최상위 메인 페이지 생성 (is_main=True 적용하여 스팸 키워드 배제)
+root_main_html = make_page_html("전국 주요 지역", main_nav_html, "", page_url_path="/", is_main=True)
 with open("index.html", "w", encoding="utf-8") as out:
     out.write(root_main_html)
 with open(os.path.join(output_dir, "index.html"), "w", encoding="utf-8") as out:
@@ -300,7 +323,7 @@ for district_name, city in district_to_city.items():
     
     is_special_two_shops = (city in ["daejeon", "cheongju"])
     
-    # (1) 구 메인 페이지
+    # (1) 구 메인 페이지 (is_main=False)
     dist_location = f"{city_name} {district_name}"
     towns_in_dist = district_to_towns.get(district_name, [])
     
@@ -309,7 +332,8 @@ for district_name, city in district_to_city.items():
         towns_nav += f'<a href="{t}/index.html" class="bg-[#18181c] border border-gold-500/30 hover:border-gold-400 text-gray-200 hover:text-gold-400 py-2.5 px-2 rounded-xl text-xs font-bold text-center transition-all shadow-sm">{t}</a>'
     towns_nav += '</div></div>'
     
-    dist_html = make_page_html(dist_location + " 전지역", towns_nav, "../../../", is_two_shop_region=is_special_two_shops)
+    dist_path = f"/output/{city}/{district_name}/index.html"
+    dist_html = make_page_html(dist_location + " 전지역", towns_nav, "../../../", page_url_path=dist_path, is_main=False, is_two_shop_region=is_special_two_shops)
     dist_dir = os.path.join(output_dir, city, district_name)
     os.makedirs(dist_dir, exist_ok=True)
     
@@ -317,13 +341,14 @@ for district_name, city in district_to_city.items():
         out.write(dist_html)
     created_districts += 1
     
-    # 구 페이지 URL 등록
-    all_page_urls.append(f"{SITE_URL}/output/{city}/{district_name}/index.html")
+    encoded_dist_url = f"{SITE_URL}/output/{city}/{quote(district_name)}/index.html"
+    all_page_urls.append(encoded_dist_url)
     
-    # (2) 동 상세 페이지
+    # (2) 동 상세 페이지 (is_main=False)
     for town_name in towns_in_dist:
         town_location = f"{city_name} {district_name} {town_name}"
-        town_html = make_page_html(town_location, "", "../../../../", is_two_shop_region=is_special_two_shops)
+        town_path = f"/output/{city}/{district_name}/{town_name}/index.html"
+        town_html = make_page_html(town_location, "", "../../../../", page_url_path=town_path, is_main=False, is_two_shop_region=is_special_two_shops)
         
         town_dir = os.path.join(output_dir, city, district_name, town_name)
         os.makedirs(town_dir, exist_ok=True)
@@ -332,11 +357,10 @@ for district_name, city in district_to_city.items():
             out.write(town_html)
         total_towns += 1
         
-        # 동 페이지 URL 등록
-        all_page_urls.append(f"{SITE_URL}/output/{city}/{district_name}/{town_name}/index.html")
+        encoded_town_url = f"{SITE_URL}/output/{city}/{quote(district_name)}/{quote(town_name)}/index.html"
+        all_page_urls.append(encoded_town_url)
 
-
-# 7. 🤖 robots.txt 생성
+# 7. robots.txt 생성
 robots_content = f"""User-agent: *
 Allow: /
 Sitemap: {SITE_URL}/sitemap.xml
@@ -344,17 +368,17 @@ Sitemap: {SITE_URL}/sitemap.xml
 with open("robots.txt", "w", encoding="utf-8") as f:
     f.write(robots_content)
 
-
-# 8. 🗺️ sitemap.xml 생성
+# 8. sitemap.xml 생성
 sitemap_xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
 sitemap_xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
 
 for url in all_page_urls:
-    sitemap_xml += f'  <url>\n    <loc>{url}</loc>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>\n'
+    priority = "1.0" if url == f"{SITE_URL}/" else "0.8"
+    sitemap_xml += f'  <url>\n    <loc>{url}</loc>\n    <changefreq>daily</changefreq>\n    <priority>{priority}</priority>\n  </url>\n'
 
 sitemap_xml += '</urlset>'
 
 with open("sitemap.xml", "w", encoding="utf-8") as f:
     f.write(sitemap_xml)
 
-print(f"✨ 경기도 전지역 대폭 확장 및 사이트맵 빌드 완료! (구/시: {created_districts}개, 동: {total_towns}개)")
+print(f"✨ 바로홈타이 SEO 자동 빌드 완벽 성공! (구/시: {created_districts}개, 동: {total_towns}개)")
