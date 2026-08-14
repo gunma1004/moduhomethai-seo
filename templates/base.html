@@ -17,43 +17,41 @@
     <meta property="og:type" content="website" />
     <meta property="og:url" content="{{ canonical_url }}" />
 
-    <!-- 폰트 -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+<!-- 폰트 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
 
-    <!-- Tailwind CSS (Play CDN) -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              gold: {
-                300: '#fde047',
-                400: '#facc15',
-                500: '#eab308',
-                600: '#ca8a04',
-              }
-            }
-          }
-        }
-      }
-    </script>
-    <style>
-      * { box-sizing: border-box; }
-      body {
-        font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif !important;
-        background-color: #0b0b0e !important;
-        color: #f3f4f6 !important;
-        margin: 0;
-        padding: 0;
-        overflow-x: hidden;
-      }
-      .gold-gradient-text {
-        background: linear-gradient(to right, #fde047, #facc15, #f59e0b);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-      }
-    </style>
+<!-- 🌟 에러를 유발하는 script 대신 안정적인 Tailwind CSS 링크 사용 -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" />
+
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif !important;
+    background-color: #0b0b0e !important;
+    color: #f3f4f6 !important;
+    margin: 0;
+    padding: 0;
+  }
+  /* 골드 테마 및 필수 유틸리티 스타일 직접 정의 */
+  .text-gold-300 { color: #fde047; }
+  .text-gold-400 { color: #facc15; }
+  .text-gold-500 { color: #eab308; }
+  .bg-gold-400 { background-color: #facc15; }
+  .bg-gold-500 { background-color: #eab308; }
+  .bg-gold-600 { background-color: #ca8a04; }
+  .border-gold-400 { border-color: #facc15; }
+  .border-gold-500 { border-color: #eab308; }
+  .border-gold-500\/20 { border-color: rgba(234, 179, 8, 0.2); }
+  .border-gold-500\/30 { border-color: rgba(234, 179, 8, 0.3); }
+  .border-gold-500\/40 { border-color: rgba(234, 179, 8, 0.4); }
+  .bg-gold-500\/10 { background-color: rgba(234, 179, 8, 0.1); }
+  .bg-gold-500\/20 { background-color: rgba(234, 179, 8, 0.2); }
+  .gold-gradient-text {
+    background: linear-gradient(to right, #fde047, #facc15, #f59e0b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+</style>
 </head>
 <body class="bg-[#0b0b0e] text-gray-100 min-h-screen flex flex-col selection:bg-gold-400 selection:text-black">
 
