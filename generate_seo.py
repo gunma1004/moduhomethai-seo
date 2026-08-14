@@ -116,7 +116,6 @@ for dist, towns in cheongju_data.items():
     for t in towns:
         add_town(dist, "cheongju", t)
 
-# 네비게이션 섹션
 main_nav_html = '<section class="nav-panel"><h2 class="nav-panel-title">📍 전국 지역별 전문관</h2>'
 seoul_dists = [d for d, c in district_to_city.items() if c == "seoul"]
 incheon_dists = [d for d, c in district_to_city.items() if c == "incheon"]
@@ -156,7 +155,6 @@ if cheongju_dists:
 
 main_nav_html += '</section>'
 
-# 제휴샵 목록 생성
 def get_default_five_shops(location_str):
     shops_data = [
         {"name": "한국미인홈케어", "tag": "🔥 추천업체", "img": "/images/shop1.jpg", "desc": "24시 정성 가득한 타이 & 아로마 전문 프리미엄 케어", "course1": "아로디시 관리 (60분)", "price1": "90,000원", "course2": "스웨디시 케어 (60분)", "price2": "140,000원", "tel": "0507-1280-3278"},
@@ -213,7 +211,6 @@ def get_two_shops(location_str):
             <h3 style="font-size:18px; font-weight:900; color:#fff;">✨ {location_str} 엄선 추천 제휴점</h3>
         </div>
 
-        <!-- 1. S슬림홈타이 -->
         <article class="shop-card-item">
             <div class="shop-card-content">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
@@ -230,7 +227,6 @@ def get_two_shops(location_str):
             </div>
         </article>
 
-        <!-- 2. 사쿠라 홈타이 -->
         <article class="shop-card-item">
             <div class="shop-card-content">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
@@ -250,33 +246,28 @@ def get_two_shops(location_str):
     '''
 
 def make_page_html(location_str, nav_html, rel_path_to_root, page_url_path="", is_main=False, is_two_shop_region=False):
+    # 🌟 정규식을 완전히 제거하여 HTML이 깨지지 않게 100% 안전한 replace 방식 사용
     page_html = template_content
-    
-    if is_main:
-        seo_title = "바로홈타이 | 전국 24시 프리미엄 홈케어 및 힐링 가이드"
-        seo_desc = "바로홈타이 공식 안내. 서울, 인천, 경기, 대전, 청주 등 전국 주요 지역 검증된 제휴점 정보 및 25분 내 신속 방문 케어를 안내합니다."
-        seo_keywords = "바로홈타이, 홈타이, 스웨디시, 아로마케어, 24시 힐링샵"
-    else:
-        seo_title = f"{location_str} 바로홈타이 | 24시 신속 방문·후불제 안심 추천"
-        seo_desc = f"[바로홈타이] {location_str} 24시 연중무휴! 자택 및 오피스텔 25분 내 초고속 도착. 검증된 프라이빗 스웨디시 & 아로마 후불제 안심 케어."
-        seo_keywords = f"{location_str}바로홈타이, {location_str}출장마사지, {location_str}홈타이, {location_str}스웨디시, 바로홈타이"
-        
     canonical_url = f"{SITE_URL}{page_url_path}"
-    
-    if "<title>" in page_html:
-        page_html = re.sub(r'<title>.*?</title>', f'<title>{seo_title}</title>', page_html, flags=re.DOTALL)
-    if 'name="description"' in page_html:
-        page_html = re.sub(r'<meta name="description" content=".*?">', f'<meta name="description" content="{seo_desc}">', page_html, flags=re.DOTALL)
-    if 'name="keywords"' in page_html:
-        page_html = re.sub(r'<meta name="keywords" content=".*?">', f'<meta name="keywords" content="{seo_keywords}">', page_html, flags=re.DOTALL)
 
-    canonical_tag = f'<link rel="canonical" href="{canonical_url}" />'
-    if 'rel="canonical"' in page_html:
-        page_html = re.sub(r'<link rel="canonical" href=".*?"\s*/?>', canonical_tag, page_html)
+    if is_main:
+        old_title = "<title>{{ location_name }} 바로홈타이 | 24시 신속 방문·후불제 안심 추천</title>"
+        new_title = "<title>바로홈타이 | 전국 24시 프리미엄 홈케어 및 힐링 가이드</title>"
+        page_html = page_html.replace(old_title, new_title)
+
+        old_desc = '<meta name="description" content="[바로홈타이] {{ location_name }} 24시 연중무휴! 자택 및 오피스텔 25분 내 초고속 도착. 검증된 프라이빗 스웨디시 & 아로마 후불제 안심 케어." />'
+        new_desc = '<meta name="description" content="바로홈타이 공식 안내. 서울, 인천, 경기, 대전, 청주 등 전국 주요 지역 검증된 제휴점 정보 및 25분 내 신속 방문 케어를 안내합니다." />'
+        page_html = page_html.replace(old_desc, new_desc)
+
+        old_keys = '<meta name="keywords" content="{{ location_name }}바로홈타이, {{ location_name }}출장마사지, {{ location_name }}홈타이, {{ location_name }}스웨디시, 바로홈타이" />'
+        new_keys = '<meta name="keywords" content="바로홈타이, 홈타이, 스웨디시, 아로마케어, 24시 힐링샵" />'
+        page_html = page_html.replace(old_keys, new_keys)
+        
+        page_html = page_html.replace('{{ location_name }}', '전국 주요 지역')
     else:
-        page_html = page_html.replace('</head>', f'    {canonical_tag}\n</head>')
+        page_html = page_html.replace('{{ location_name }}', location_str)
 
-    page_html = page_html.replace("{{ location_name }}", location_str)
+    page_html = page_html.replace("{{ canonical_url }}", canonical_url)
     page_html = page_html.replace('href="/"', f'href="{rel_path_to_root}index.html"')
 
     if is_two_shop_region:
@@ -289,14 +280,12 @@ def make_page_html(location_str, nav_html, rel_path_to_root, page_url_path="", i
 
     return page_html
 
-# 메인 생성
 root_main_html = make_page_html("전국 주요 지역", main_nav_html, "", page_url_path="/", is_main=True)
 with open("index.html", "w", encoding="utf-8") as out:
     out.write(root_main_html)
 with open(os.path.join(output_dir, "index.html"), "w", encoding="utf-8") as out:
     out.write(root_main_html)
 
-# 구 및 동 생성
 total_towns = 0
 created_districts = 0
 
@@ -349,7 +338,6 @@ for district_name, city in district_to_city.items():
         encoded_town_url = f"{SITE_URL}/output/{city}/{quote(district_name)}/{quote(town_name)}/index.html"
         all_page_urls.append(encoded_town_url)
 
-# robots.txt & sitemap.xml
 with open("robots.txt", "w", encoding="utf-8") as f:
     f.write(f"User-agent: *\nAllow: /\nSitemap: {SITE_URL}/sitemap.xml\n")
 
@@ -362,4 +350,4 @@ sitemap_xml += '</urlset>'
 with open("sitemap.xml", "w", encoding="utf-8") as f:
     f.write(sitemap_xml)
 
-print(f"✨ 모바일/PC 고정 최적화 완료! (구: {created_districts}개, 동: {total_towns}개)")
+print(f"✨ 스타일 복구 빌드 완벽 적용 완료! (구: {created_districts}개, 동: {total_towns}개)")
