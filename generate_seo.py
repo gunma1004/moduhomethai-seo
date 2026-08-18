@@ -3,7 +3,7 @@ import csv
 import re
 from urllib.parse import quote
 
-SITE_URL = "https://xn--2z1b98p8yb63d.shop"
+SITE_URL = "https://xn--2o2b11ew7m8kjj2g.shop"
 
 with open("templates/base.html", "r", encoding="utf-8") as f:
     template_content = f.read()
@@ -347,7 +347,7 @@ for url in all_page_urls:
     sitemap_xml += f'  <url>\n    <loc>{url}</loc>\n    <changefreq>daily</changefreq>\n    <priority>{priority}</priority>\n  </url>\n'
 sitemap_xml += '</urlset>'
 
-with open("sitemap.xml", "w", encoding="utf-8") as f:
-    f.write(sitemap_xml)
+with open("robots.txt", "w", encoding="utf-8") as f:
+    f.write(f"User-agent: *\nAllow: /\nSitemap: {SITE_URL}/sitemap.xml\n")
 
 print(f"✨ 스타일 복구 빌드 완벽 적용 완료! (구: {created_districts}개, 동: {total_towns}개)")
